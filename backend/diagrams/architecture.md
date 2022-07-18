@@ -15,13 +15,13 @@ classDiagram
     ControllerTags.. TagsInSong
 
      ControllerUser --> ControllerDatabase
-     ControllerSongs--> ControllerDatabase
-     ControllerPlaylists--> ControllerDatabase
-     ControllerTags--> ControllerDatabase
+     ControllerSongs --> ControllerDatabase
+     ControllerPlaylists --> ControllerDatabase
+     ControllerTags --> ControllerDatabase
 
     class Server {
-        clientConnection
-        dbConnection
+        app: Express
+        listen()
     }
 
     class ControllerUser{
@@ -31,31 +31,31 @@ classDiagram
     }
     
     class ControllerSongs {
-        GetAllSongs(request: SongGetAllRequest)
-        GetSong(request: SongGetRequest)
-        AddSong(request: SongAddRequest)
-        SetSongTags(request: SongSetTagsRequest)
-        UpdateSongInfo(request: SongUpdateRequest)
-        RemoveSongTags(request: SongRemoveTagsRequest)
-        DeleteSong(request: SongDeleteRequest)
+        GetAllSongs(request: RequestSongGetAll)
+        GetSong(request: RequestSongGet)
+        AddSong(request: RequestSongAdd)
+        SetSongTags(request: RequestSongSetTags)
+        UpdateSongInfo(request: RequestSongUpdate)
+        RemoveSongTags(request: RequestSongRemoveTags)
+        DeleteSong(request: RequestSongDelete)
     }
     
     class ControllerPlaylists {
-        GetAllPlaylists(request: PlaylistGetAllRequest)
-        GetPlaylist(request: PlaylistGetRequest)
-        AddSong(request: PlaylistAddSongRequest)
-        MoveSongToAnotherPlaylist(request: PlaylistMoveSongRequest)
-        RemoveSong(request: PlaylistRemoveSongRequest)
-        CreatePlaylist(request: PlaylistCreateRequest)
-        UpdatePlaylistInfo(request: PlaylistUpdateRequest)
-        DeletePlaylist(request: PlaylistDeleteRequest)
+        GetAllPlaylists(request: RequestPlaylistGetAll)
+        GetPlaylist(request: RequestPlaylistGet)
+        AddSong(request: RequestPlaylistAddSong)
+        MoveSongToAnotherPlaylist(request: RequestPlaylistMoveSong)
+        RemoveSong(request: RequestPlaylistRemoveSong)
+        CreatePlaylist(request: RequestPlaylistCreate)
+        UpdatePlaylistInfo(request: RequestPlaylistUpdate)
+        DeletePlaylist(request: RequestPlaylistDelete)
     }
     
     class ControllerTags {
-        GetAllTags(request: TagGetAllRequest)
-        GetSongTags(request: TagGetSongRequest)
-        CreateTag(request: TagCreateRequest)
-        DeleteTag(request: TagDeleteRequest)
+        GetAllTags(request: RequestTagGetAll)
+        GetSongTags(request: RequestTagGetSong)
+        CreateTag(request: RequestTagCreate)
+        DeleteTag(request: RequestTagDelete)
     }
     
     class ControllerDatabase{
@@ -106,8 +106,8 @@ classDiagram
     
     class TagsInSong {
         tags_in_song_id: string
-        song_id
-        tag_id
+        song_id: string
+        tag_id: string
     }
     
     class User {
