@@ -56,6 +56,7 @@ classDiagram
     }
     
     class ControllerDatabase{
+        CheckApiKeys() void
         GetUserById(userId: string) User
         GetUserByUsername(username: string) User
         GetUserByUsernameAndPassword(username: string, password_hash: string) User
@@ -95,14 +96,14 @@ classDiagram
         artist: string
         album: string
         is_deleted: boolean
-        created: numbers
+        created: number
         modified: number
     }
     
     class SongsInPlaylist {
         songs_in_playlist_id: string
-        playlist_id
-        song_id
+        playlist_id: string
+        song_id: string
         is_deleted: boolean
         created: number
         modified: number
@@ -128,7 +129,8 @@ classDiagram
     class User {
         user_id: string
         username: string
-        password: strings
+        password_hash: string
+        api_key: string
         is_deleted: boolean
         created: number
         modified: number
@@ -140,7 +142,6 @@ classDiagram
     }
     
     class ResponseUserRegister {
-        auth_token: string
         user_id: string
         is_success: boolean
         error_code?: number
@@ -153,7 +154,7 @@ classDiagram
     }
     
     class ResponseUserLogin {
-        auth_token: string
+        api_key: string
         user_id: string
         is_success: boolean
         error_code?: number
@@ -161,7 +162,7 @@ classDiagram
     }
     
     class RequestSongAdd {
-        access_token: string
+        api_key: string
         timestamp: number
         file: File 
         title: string
@@ -192,7 +193,7 @@ classDiagram
     }
     
     class RequestPlaylistUpdate {
-        access_token: string
+        api_key: string
         timestamp: number
         playlist_id: string
         new_title: string

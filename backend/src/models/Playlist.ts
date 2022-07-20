@@ -3,4 +3,7 @@ export default interface Playlist {
     user_id: string
     title: string
     description: string
+    is_deleted: boolean
+    created: number
+    modified: number
 }
