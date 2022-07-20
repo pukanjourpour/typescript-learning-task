@@ -1,20 +1,25 @@
 ```mermaid
 classDiagram
-    direction RL
+    direction LR
 
     User .. ControllerDatabase
+    Session .. ControllerDatabase
     Playlist .. ControllerDatabase
     Song .. ControllerDatabase
     SongsInPlaylist .. ControllerDatabase
     Tag .. ControllerDatabase
     TagsInSong .. ControllerDatabase
         
-    ControllerUser ..User
+    ControllerUser .. User
+    ControllerUser .. Session
     ControllerPlaylists .. Playlist
+    ControllerPlaylists .. Session
     ControllerSongs .. Song
     ControllerSongs .. SongsInPlaylist
+    ControllerSongs .. Session
     ControllerTags.. Tag
     ControllerTags.. TagsInSong
+    ControllerTags.. Session
 
      ControllerUser .. ControllerDatabase
      ControllerSongs .. ControllerDatabase
@@ -56,7 +61,10 @@ classDiagram
     }
     
     class ControllerDatabase{
-        CheckApiKeys() void
+        InsertSession(session: Session) void
+        UpdateSession(session: Session) void
+        DeleteSession(session_id: string): boolean
+        isSessionValid(session: Session): boolean 
         GetUserById(userId: string) User
         GetUserByUsername(username: string) User
         GetUserByUsernameAndPassword(username: string, password_hash: string) User
@@ -76,6 +84,13 @@ classDiagram
         GetTagsBySongId(songId: string) Tag[]
         InsertTag(tag: Tag) void
         UpdateTag(tag: Tag) void
+    }
+    
+    class Session {
+        session_id: string
+        user_id: string
+        is_active: boolean
+        api_key: string
     }
     
     class Playlist {
@@ -130,7 +145,6 @@ classDiagram
         user_id: string
         username: string
         password_hash: string
-        api_key: string
         is_deleted: boolean
         created: number
         modified: number
