@@ -6,6 +6,10 @@
     "outputDirectory": "build",
     "specVersion": 3
   },
+  "swagger": {
+    "outputDirectory": ".",
+    "entryFile": "./src/config/Server.ts"
+  },
   "routes": {
     "routesDir": "build"
   }
