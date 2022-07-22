@@ -1,4 +1,6 @@
 export interface RequestUserLogin {
-    username: string;
+    request_hash: string
+    timestamp: number
+    username: string
     password_hash: string
 }

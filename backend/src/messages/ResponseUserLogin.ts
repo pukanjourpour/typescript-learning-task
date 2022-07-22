@@ -1,5 +1,7 @@
 export interface ResponseUserLogin {
-    user_id: string;
-    username: string;
-    is_success: boolean;
+    session_hash: string
+    user_id: string
+    is_success: boolean
+    error_code: number
+    error_msg: string
 }

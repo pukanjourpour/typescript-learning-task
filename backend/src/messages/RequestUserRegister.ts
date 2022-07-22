@@ -1,4 +1,6 @@
 export interface RequestUserRegister {
-    username: string;
-    password_hash: string | null;
+    request_hash: string
+    timestamp: number
+    username: string
+    password_hash: string
 }

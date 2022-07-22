@@ -61,10 +61,10 @@ classDiagram
     }
     
     class ControllerDatabase{
+        GetSessionById(session_id: string) Session
         InsertSession(session: Session) void
         UpdateSession(session: Session) void
-        DeleteSession(session_id: string): boolean
-        isSessionValid(session: Session): boolean 
+        DeleteSession(session_id: string) boolean
         GetUserById(userId: string) User
         GetUserByUsername(username: string) User
         GetUserByUsernameAndPassword(username: string, password_hash: string) User
@@ -90,7 +90,7 @@ classDiagram
         session_id: string
         user_id: string
         is_active: boolean
-        api_key: string
+        session_hash: string
     }
     
     class Playlist {
@@ -151,6 +151,8 @@ classDiagram
     }
     
     class RequestUserRegiser {
+        request_hash: string
+        timestamp: number
         username: string
         password_hash: string   
     }
@@ -158,25 +160,28 @@ classDiagram
     class ResponseUserRegister {
         user_id: string
         is_success: boolean
-        error_code?: number
-        error_msg?: string
+        error_code: number
+        error_msg: string
     }
     
     class RequestUserLogin {
+        request_hash: string
+        timestamp: number
         username: string
         password_hash: string   
     }
     
     class ResponseUserLogin {
-        api_key: string
+        session_hash: string
         user_id: string
         is_success: boolean
-        error_code?: number
-        error_msg?: string
+        error_code: number
+        error_msg: string
     }
     
     class RequestSongAdd {
-        api_key: string
+        session_hash: string
+        request_hash: string
         timestamp: number
         file: File 
         title: string
@@ -187,12 +192,13 @@ classDiagram
     class ResponseSongAdd {
         song_id: string
         is_success: boolean
-        error_code?: number
-        error_msg?: string
+        error_code: number
+        error_msg: string
     }
     
     class RequestPlaylistGetAll {
-        access_token: string
+        session_hash: string
+        request_hash: string
         timestamp: number
     }
     
@@ -202,12 +208,13 @@ classDiagram
         titles: string[]
         descriptions: string[]
         is_success: boolean
-        error_code?: number
-        error_msg?: string
+        error_code: number
+        error_msg: string
     }
     
     class RequestPlaylistUpdate {
-        api_key: string
+        session_hash: string
+        request_hash: string
         timestamp: number
         playlist_id: string
         new_title: string
@@ -216,8 +223,8 @@ classDiagram
     
     class ResponsePlaylistUpdate {
         is_success: boolean
-        error_code?: number
-        error_msg?: string
+        error_code: number
+        error_msg: string
     }
 
 ```

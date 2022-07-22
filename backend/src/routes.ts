@@ -3,7 +3,7 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse, fetchMiddlewares } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { ControllerUsers } from './../src/controllers/ControllerUsers';
+import { ControllerUsers } from './controllers/ControllerUsers';
 import type { RequestHandler } from 'express';
 import * as express from 'express';
 
@@ -15,6 +15,8 @@ const models: TsoaRoute.Models = {
         "properties": {
             "user_id": {"dataType":"string","required":true},
             "is_success": {"dataType":"boolean","required":true},
+            "error_code": {"dataType":"double","required":true},
+            "error_msg": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -22,8 +24,10 @@ const models: TsoaRoute.Models = {
     "RequestUserRegister": {
         "dataType": "refObject",
         "properties": {
+            "request_hash": {"dataType":"string","required":true},
+            "timestamp": {"dataType":"double","required":true},
             "username": {"dataType":"string","required":true},
-            "password_hash": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "password_hash": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -31,9 +35,11 @@ const models: TsoaRoute.Models = {
     "ResponseUserLogin": {
         "dataType": "refObject",
         "properties": {
+            "session_hash": {"dataType":"string","required":true},
             "user_id": {"dataType":"string","required":true},
-            "username": {"dataType":"string","required":true},
             "is_success": {"dataType":"boolean","required":true},
+            "error_code": {"dataType":"double","required":true},
+            "error_msg": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -41,6 +47,8 @@ const models: TsoaRoute.Models = {
     "RequestUserLogin": {
         "dataType": "refObject",
         "properties": {
+            "request_hash": {"dataType":"string","required":true},
+            "timestamp": {"dataType":"double","required":true},
             "username": {"dataType":"string","required":true},
             "password_hash": {"dataType":"string","required":true},
         },
