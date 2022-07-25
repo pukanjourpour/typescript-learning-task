@@ -1,21 +1,17 @@
-import {Body, Controller, Get, Path, Post, Query, Route, SuccessResponse} from "tsoa";
+import {Body, Controller, Post, Route} from "tsoa";
 import {User} from "../models/User";
 import {RequestUserRegister} from "../messages/RequestUserRegister";
 import {ResponseUserRegister} from "../messages/ResponseUserRegister";
 import {RequestUserLogin} from "../messages/RequestUserLogin";
 import {ResponseUserLogin} from "../messages/ResponseUserLogin";
 import {ControllerDatabase} from "./ControllerDatabase";
+import {ErrorCode} from "../enums/ErrorCode";
+import {ErrorMessage} from "../enums/ErrorMessage";
 import {v4 as uuidv4} from 'uuid';
+import {Session} from "../models/Session";
 
 @Route("users")
 export class ControllerUsers extends Controller {
-
-    // error codes:
-    // 0: success
-    // -1: failed to connect to database
-    // 2: user already exists
-    // 3: user does not exist
-    // 4: password is not correct
 
     @Post("register")
     public async Register(@Body() request: RequestUserRegister): Promise<ResponseUserRegister> {
@@ -26,39 +22,28 @@ export class ControllerUsers extends Controller {
             error_msg: ""
         } as ResponseUserRegister;
 
-        let newUser;
-        await ControllerDatabase.GetUserByUsername(request.username)
-            .then((result) => {
-                if (!result.user) {
-                    newUser = {
-                        user_id: uuidv4(),
-                        username: request.username,
-                        password_hash: request.password_hash,
-                        is_deleted: 0,
-                        created: Date.now(),
-                        modified: Date.now()
-                    } as User;
-                    return ControllerDatabase.InsertUser(newUser);
-                } else {
-                    return {user: null, status: 2}
-                }
-            })
-            .then((result) => {
-                if (result.status === 2) {
-                    response.error_code = result.status;
-                    response.error_msg = "User already exists";
-                } else if (result.status === 0) {
-                    response.user_id = newUser.user_id;
-                    response.is_success = true;
-                    response.error_code = result.status;
-                    response.error_msg = "";
-                } else if (result.status === -1) {
-                    response.error_code = result.status;
-                    response.error_msg = "Failed to connect to database";
-                }
-            }, (err) => {
-                console.log(err);
-            });
+        try {
+            let user_existing = await ControllerDatabase.GetUserByUsername(request.username);
+            if (!user_existing) {
+                let user_new = {
+                    user_id: uuidv4(),
+                    username: request.username,
+                    password_hash: request.password_hash,
+                    is_deleted: 0,
+                    created: Date.now(),
+                    modified: Date.now()
+                } as User;
+                await ControllerDatabase.InsertUser(user_new);
+                response.user_id = user_new.user_id;
+                response.is_success = true;
+            } else {
+                response.error_code = ErrorCode.user_already_exists;
+                response.error_msg = ErrorMessage.user_already_exists;
+            }
+        } catch (err) {
+            response.error_code = ErrorCode.unexpected_error;
+            response.error_msg = ErrorMessage.unexpected_error;
+        }
         return response;
     }
 
@@ -73,66 +58,47 @@ export class ControllerUsers extends Controller {
         } as ResponseUserLogin;
 
         try {
-            await ControllerDatabase.GetUserByUsername(request.username)
-                .then((result) => {
-                    if (result.status === 0) {
-                        return ControllerDatabase.GetUserByUsernameAndPassword(request.username, request.password_hash);
+            let user_existing = await ControllerDatabase.GetUserByUsername(request.username);
+            if (user_existing) {
+                let user_validated = await ControllerDatabase.GetUserByUsernameAndPassword(request.username, request.password_hash);
+                if (user_validated) {
+
+                    let session_existing = await ControllerDatabase.GetSessionByUserId(user_validated.user_id);
+                    if (session_existing) {
+                        session_existing.session_hash = "some new session hash";
+                        session_existing.modified = Date.now();
+                        console.log(session_existing)
+                        await ControllerDatabase.UpdateSession(session_existing);
+                        response.session_hash = session_existing.session_hash;
+
                     } else {
-                        if (result.status === -1) {
-                            response.error_code = result.status;
-                            response.error_msg = "Failed to connect to database";
-                            throw new Error("Failed to connect to database");
-                        } else if (result.status === 3) {
-                            response.error_code = result.status;
-                            response.error_msg = "User does not exist";
-                            throw new Error("User does not exist");
-                        } else {
-                            throw new Error("Unknown error")
-                        }
-                    }
-                })
-                .then((result) => {
-                    if (result.status === 0 && result.user) {
-                        let session = {
+                        let session_new = {
                             session_id: uuidv4(),
-                            user_id: result.user.user_id,
+                            user_id: user_validated.user_id,
                             is_active: 1,
+                            // TODO
                             session_hash: "some session hash",
                             is_deleted: 0,
                             created: Date.now(),
                             modified: Date.now()
-                        }
-                        return ControllerDatabase.InsertSession(session);
-                    } else {
-                        if (result.status === -1) {
-                            response.error_code = result.status;
-                            response.error_msg = "Failed to connect to database";
-                            throw new Error("Failed to connect to database");
-                        } else if (result.status === 4) {
-                            response.error_code = result.status;
-                            response.error_msg = "Password is incorrect";
-                            throw new Error("Password is incorrect");
-                        } else {
-                            throw new Error("Unknown error")
-                        }
+                        } as Session;
+                        await ControllerDatabase.InsertSession(session_new);
+                        response.session_hash = session_new.session_hash;
                     }
-                })
-                .then((result) => {
-                    if (result.status === -1) {
-                        response.error_code = result.status;
-                        response.error_msg = "Failed to connect to database";
-                    } else if (result.status === 0 && result.session) {
-                        response.session_hash = result.session.session_hash;
-                        response.user_id = result.session.user_id;
-                        response.is_success = true;
-                        response.error_code = result.status;
-                        response.error_msg = "";
-                    }
-                });
-        } catch (err: any) {
-            console.log(err.message)
+                    response.user_id = user_validated.user_id;
+                    response.is_success = true;
+                } else {
+                    response.error_code = ErrorCode.password_incorrect;
+                    response.error_msg = ErrorMessage.password_incorrect;
+                }
+            } else {
+                response.error_code = ErrorCode.user_does_not_exist;
+                response.error_msg = ErrorMessage.user_does_not_exist;
+            }
+        } catch (err) {
+            response.error_code = ErrorCode.unexpected_error;
+            response.error_msg = ErrorMessage.unexpected_error;
         }
-
         return response;
     }
 

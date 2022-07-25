@@ -6,6 +6,138 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"ResponsePlaylistGetAll": {
+				"properties": {
+					"playlist_ids": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"user_ids": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"titles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"descriptions": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"is_success": {
+						"type": "boolean"
+					},
+					"error_code": {
+						"type": "number",
+						"format": "double"
+					},
+					"error_msg": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"playlist_ids",
+					"user_ids",
+					"titles",
+					"descriptions",
+					"is_success",
+					"error_code",
+					"error_msg"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RequestPlaylistsGetAll": {
+				"properties": {
+					"session_hash": {
+						"type": "string"
+					},
+					"user_id": {
+						"type": "string"
+					},
+					"request_hash": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"session_hash",
+					"user_id",
+					"request_hash",
+					"timestamp"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResponsePlaylistCreate": {
+				"properties": {
+					"playlist_id": {
+						"type": "string"
+					},
+					"is_success": {
+						"type": "boolean"
+					},
+					"error_code": {
+						"type": "number",
+						"format": "double"
+					},
+					"error_msg": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"playlist_id",
+					"is_success",
+					"error_code",
+					"error_msg"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RequestPlaylistCreate": {
+				"properties": {
+					"session_hash": {
+						"type": "string"
+					},
+					"user_id": {
+						"type": "string"
+					},
+					"request_hash": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"session_hash",
+					"user_id",
+					"request_hash",
+					"timestamp",
+					"title",
+					"description"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ResponseUserRegister": {
 				"properties": {
 					"user_id": {
@@ -125,6 +257,64 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/playlists/all": {
+			"post": {
+				"operationId": "GetAllPlaylists",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponsePlaylistGetAll"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestPlaylistsGetAll"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/playlists/create": {
+			"post": {
+				"operationId": "CreatePlaylist",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponsePlaylistCreate"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestPlaylistCreate"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/users/register": {
 			"post": {
 				"operationId": "Register",

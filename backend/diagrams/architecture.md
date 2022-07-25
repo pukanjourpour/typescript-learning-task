@@ -181,6 +181,7 @@ classDiagram
     
     class RequestSongAdd {
         session_hash: string
+        user_id: string
         request_hash: string
         timestamp: number
         file: File 
@@ -198,6 +199,7 @@ classDiagram
     
     class RequestPlaylistGetAll {
         session_hash: string
+        user_id: string
         request_hash: string
         timestamp: number
     }
@@ -222,6 +224,7 @@ classDiagram
     }
     
     class ResponsePlaylistUpdate {
+        playlist_id: string
         is_success: boolean
         error_code: number
         error_msg: string

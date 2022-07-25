@@ -3,6 +3,8 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse, fetchMiddlewares } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ControllerPlaylists } from './controllers/ControllerPlaylists';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ControllerUsers } from './controllers/ControllerUsers';
 import type { RequestHandler } from 'express';
 import * as express from 'express';
@@ -10,6 +12,55 @@ import * as express from 'express';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+    "ResponsePlaylistGetAll": {
+        "dataType": "refObject",
+        "properties": {
+            "playlist_ids": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "user_ids": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "titles": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "descriptions": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "is_success": {"dataType":"boolean","required":true},
+            "error_code": {"dataType":"double","required":true},
+            "error_msg": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RequestPlaylistsGetAll": {
+        "dataType": "refObject",
+        "properties": {
+            "session_hash": {"dataType":"string","required":true},
+            "user_id": {"dataType":"string","required":true},
+            "request_hash": {"dataType":"string","required":true},
+            "timestamp": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ResponsePlaylistCreate": {
+        "dataType": "refObject",
+        "properties": {
+            "playlist_id": {"dataType":"string","required":true},
+            "is_success": {"dataType":"boolean","required":true},
+            "error_code": {"dataType":"double","required":true},
+            "error_msg": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RequestPlaylistCreate": {
+        "dataType": "refObject",
+        "properties": {
+            "session_hash": {"dataType":"string","required":true},
+            "user_id": {"dataType":"string","required":true},
+            "request_hash": {"dataType":"string","required":true},
+            "timestamp": {"dataType":"double","required":true},
+            "title": {"dataType":"string","required":true},
+            "description": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ResponseUserRegister": {
         "dataType": "refObject",
         "properties": {
@@ -65,6 +116,56 @@ export function RegisterRoutes(app: express.Router) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
+        app.post('/playlists/all',
+            ...(fetchMiddlewares<RequestHandler>(ControllerPlaylists)),
+            ...(fetchMiddlewares<RequestHandler>(ControllerPlaylists.prototype.GetAllPlaylists)),
+
+            function ControllerPlaylists_GetAllPlaylists(request: any, response: any, next: any) {
+            const args = {
+                    request: {"in":"body","name":"request","required":true,"ref":"RequestPlaylistsGetAll"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new ControllerPlaylists();
+
+
+              const promise = controller.GetAllPlaylists.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/playlists/create',
+            ...(fetchMiddlewares<RequestHandler>(ControllerPlaylists)),
+            ...(fetchMiddlewares<RequestHandler>(ControllerPlaylists.prototype.CreatePlaylist)),
+
+            function ControllerPlaylists_CreatePlaylist(request: any, response: any, next: any) {
+            const args = {
+                    request: {"in":"body","name":"request","required":true,"ref":"RequestPlaylistCreate"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new ControllerPlaylists();
+
+
+              const promise = controller.CreatePlaylist.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/users/register',
             ...(fetchMiddlewares<RequestHandler>(ControllerUsers)),
             ...(fetchMiddlewares<RequestHandler>(ControllerUsers.prototype.Register)),
