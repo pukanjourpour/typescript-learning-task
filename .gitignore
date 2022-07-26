@@ -3,3 +3,6 @@ node_modules/
 /backend/build/build/
 /backend/build/src/
 /backend/build/
+/backend/.eslintrc
+/backend/.prettierignore
+/backend/.prettierrc.json

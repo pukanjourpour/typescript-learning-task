@@ -1,313 +1,263 @@
-import {Controller} from "tsoa";
-import {User} from "../models/User";
-import {Session} from "../models/Session";
+import { Controller } from "tsoa";
+import { User } from "../models/User";
+import Database from "sqlite-async";
+import { Session } from "../models/Session";
 import Playlist from "../models/Playlist";
 
 export class ControllerDatabase extends Controller {
 
-    public static async InsertUser(user: User): Promise<void> {
-        let db = ControllerDatabase.ConnectToDatabase();
-        return new Promise((resolve, reject) => {
-            if (db) {
-                let sql = `INSERT INTO user (user_id, username, password_hash, is_deleted, created, modified)
-                           VALUES ('${user.user_id}', '${user.username}', '${user.password_hash}', ${user.is_deleted},
-                                   ${user.created}, ${user.modified})`;
-                db.exec(
-                    sql,
-                    function (err) {
-                        if (err) {
-                            console.log(err)
-                            reject(new Error("Unexpected error"))
-                        } else {
-                            console.log(`Added user with id ${user.user_id}`)
-                            resolve();
-                        }
-                    }
-                );
+	public static async InsertUser(user: User): Promise<number> {
+		let user_id = -1;
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
+		if (db) {
+			try {
+				let sql = "INSERT INTO user (user_uuid, username, password_hash, is_deleted, created, modified) VALUES ($user_uuid, $username, $password_hash, $is_deleted, $created, $modified)";
+				let result = await db.run(sql, {
+					$user_uuid: user.user_uuid,
+					$username: user.username,
+					$password_hash: user.password_hash,
+					$is_deleted: user.is_deleted,
+					$created: user.created,
+					$modified: user.modified,
+				});
+				user_id = result.lastID;
+				console.log("Added user with id", user_id);
+				db.close();
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return user_id;
+	}
 
-                db.close()
-            } else {
-                reject(new Error("Unexpected error"))
-            }
-        });
-    }
+	public static async GetUserByUuid(user_uuid: string): Promise<User | null> {
+		let user: User | null = null;
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
 
-    public static async GetUserByUsername(username: string): Promise<User|null> {
-        let db = ControllerDatabase.ConnectToDatabase();
-        return new Promise((resolve, reject) => {
-            if (db) {
-                let sql = `SELECT *
-                           FROM user
-                           WHERE username = ?`
-                db.get(
-                    sql,
-                    [username],
-                    function (err, row) {
-                        if (err) {
-                            reject(err)
-                        } else {
-                            if (row) {
-                                let user = {
-                                    user_id: row.user_id,
-                                    username: username,
-                                    password_hash: row.password_hash,
-                                    is_deleted: row.is_deleted,
-                                    created: row.created,
-                                    modified: row.modified
-                                } as User
-                                console.log(`User with username '${username}' found, id is ${user.user_id}`)
-                                resolve(user)
-                            } else {
-                                console.log(`No user found with the username '${username}'`)
-                                resolve(null)
-                            }
-                        }
-                    }
-                );
-                db.close()
-            } else {
-                reject(new Error("Unexpected error"))
-            }
-        });
-    }
+		if (db) {
+			try {
+				let sql = "SELECT * FROM user WHERE user_uuid = $user_uuid";
+				user = await db.get(sql, { $user_uuid: user_uuid });
+				if (user) {
+					console.log("User with uuid", user_uuid, "was found, id is", user.user_id);
+				} else {
+					console.log("User with uuid", user_uuid, "was not found");
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return user;
+	}
 
-    public static async GetUserByUsernameAndPassword(username: string, password_hash: string): Promise<User|null> {
-        let db = ControllerDatabase.ConnectToDatabase();
-        return new Promise((resolve, reject) => {
-            if (db) {
-                let sql = `SELECT *
-                           FROM user
-                           WHERE username = ?
-                             and password_hash = ?`;
-                db.get(
-                    sql,
-                    [username, password_hash],
-                    function (err, row) {
-                        if (err) {
-                            reject(err)
-                        } else {
-                            if (row) {
-                                let user = {
-                                    user_id: row.user_id,
-                                    username: username,
-                                    password_hash: password_hash,
-                                    is_deleted: row.is_deleted,
-                                    created: row.created,
-                                    modified: row.modified
-                                } as User
-                                console.log(`Password for user '${username}' is correct`)
-                                resolve(user)
-                            } else {
-                                console.log(`Password for user '${username}' is incorrect`)
-                                resolve(null)
-                            }
-                        }
-                    }
-                );
-                db.close()
-            } else {
-                reject(new Error("Unexpected error"))
-            }
-        });
-    }
+	public static async GetUserByUsername(username: string): Promise<User | null> {
+		let user: User | null = null;
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
 
-    public static async InsertSession(session: Session): Promise<void> {
-        let db = ControllerDatabase.ConnectToDatabase();
-        return new Promise((resolve, reject) => {
-            if (db) {
-                let sql = `INSERT INTO session (session_id, user_id, is_active, session_hash, is_deleted, created,
-                                                modified)
-                           VALUES ('${session.session_id}', '${session.user_id}', '${session.is_active}',
-                                   '${session.session_hash}', ${session.is_deleted}, ${session.created},
-                                   ${session.modified})`;
-                db.exec(
-                    sql,
-                    function (err) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            console.log(`Added session with id ${session.session_id}`)
-                            resolve();
-                        }
-                    }
-                );
-                db.close()
-            } else {
-                reject(new Error("Unexpected error"))
-            }
-        });
-    }
+		if (db) {
+			try {
+				let sql = "SELECT * FROM user WHERE username = $username";
+				user = await db.get(sql, { $username: username });
+				if (user) {
+					console.log("User with username", username, "found, id is", user.user_id);
+				} else {
+					console.log("User with username", username, "was not found");
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return user;
+	}
 
-    public static async GetSessionByUserId(user_id: string): Promise<Session|null> {
-        let db = ControllerDatabase.ConnectToDatabase();
-        return new Promise((resolve, reject) => {
-            if (db) {
-                let sql = `SELECT *
-                           FROM session
-                           WHERE user_id = ?`
-                db.get(
-                    sql,
-                    [user_id],
-                    function (err, row) {
-                        if (err) {
-                            reject(err)
-                        } else {
-                            if (row) {
-                                let session = {
-                                    session_id: row.session_id,
-                                    user_id: user_id,
-                                    is_active: row.is_active,
-                                    session_hash: row.session_hash,
-                                    is_deleted: row.is_deleted,
-                                    created: row.created,
-                                    modified: row.modified
-                                } as Session
-                                console.log(`Session for user with id '${user_id}' found, id is ${session.session_id}`)
-                                resolve(session)
-                            } else {
-                                console.log(`No session found for user with id '${user_id}'`)
-                                resolve(null)
-                            }
-                        }
-                    }
-                );
-                db.close()
-            } else {
-                reject(new Error("Unexpected error"))
-            }
-        });
-    }
+	public static async GetUserByUsernameAndPassword(username: string, password_hash: string): Promise<User | null> {
+		let user: User | null = null;
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
 
-    public static async UpdateSession(session: Session): Promise<void> {
-        let db = ControllerDatabase.ConnectToDatabase();
-        return new Promise((resolve, reject) => {
-            if (db) {
-                let sql = `UPDATE session SET session_hash = ?, modified = ? WHERE session_id = ?`
-                db.run(
-                    sql,
-                    [session.session_hash, session.modified, session.session_id],
-                    function (err) {
-                        if (err) {
-                            console.log(err)
-                            reject(err);
-                        } else {
-                            console.log(`Updated session with id ${session.session_id}`)
-                            resolve();
-                        }
-                    }
-                );
-                db.close()
-            } else {
-                reject(new Error("Unexpected error"))
-            }
-        });
-    }
+		if (db) {
+			try {
+				let sql = "SELECT * FROM user WHERE username = $username AND password_hash = $password_hash";
+				user = await db.get(sql, {
+					$username: username,
+					$password_hash: password_hash,
+				});
+				if (user) {
+					console.log("Password for", username, "is correct");
+				} else {
+					console.log("Password for", username, "is incorrect");
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return user;
+	}
 
-    public static async InsertPlaylist(playlist: Playlist): Promise<void> {
-        let db = ControllerDatabase.ConnectToDatabase();
-        return new Promise((resolve, reject) => {
-            if (db) {
-                let sql = `INSERT INTO playlist (playlist_id, user_id, title, description, is_deleted, created, modified)
-                           VALUES ('${playlist.playlist_id}', '${playlist.user_id}', '${playlist.title}', '${playlist.description}', ${playlist.is_deleted},
-                                   ${playlist.created}, ${playlist.modified})`;
-                db.exec(
-                    sql,
-                    function (err) {
-                        if (err) {
-                            console.log(err)
-                            reject(new Error("Unexpected error"))
-                        } else {
-                            console.log(`Added playlist with id ${playlist.user_id}`)
-                            resolve();
-                        }
-                    }
-                );
+	public static async InsertSession(session: Session): Promise<number> {
+		let session_id = -1;
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
+		if (db) {
+			try {
+				let sql = "INSERT INTO session (user_id, is_active, session_hash, is_deleted, created, modified) VALUES ($user_id, $is_active, $session_hash, $is_deleted, $created, $modified)";
+				let result = await db.run(sql, {
+					$user_id: session.user_id,
+					$is_active: session.is_active,
+					$session_hash: session.session_hash,
+					$is_deleted: session.is_deleted,
+					$created: session.created,
+					$modified: session.modified,
+				});
+				session_id = result.lastID;
+				console.log("Added session with id", session_id);
+				db.close();
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return session_id;
+	}
 
-                db.close()
-            } else {
-                reject(new Error("Unexpected error"))
-            }
-        });
-    }
+	public static async GetSessionByUserId(user_id: number): Promise<Session | null> {
+		let session: Session | null = null;
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
 
-    public static async GetAllPlaylists(): Promise<Playlist[]> {
-        let db = ControllerDatabase.ConnectToDatabase();
-        return new Promise((resolve, reject) => {
-            if (db) {
-                let sql = `SELECT * FROM playlist`
+		if (db) {
+			try {
+				let sql = "SELECT * FROM session WHERE user_id = $user_id";
+				session = await db.get(sql, { $user_id: user_id });
+				if (session) {
+					console.log("Session was found for user with id", user_id);
+				} else {
+					console.log("Session was not found for user with id", user_id);
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return session;
+	}
 
-                db.all(sql,
-                    (err, rows) => {
-                    if (err){
-                        reject(err)
-                    } else {
-                        let playlists: Playlist[] = [];
-                        rows.forEach((row) => {
-                            playlists.push({
-                                playlist_id: row.playlist_id,
-                                user_id: row.user_id,
-                                title: row.title,
-                                description: row.description,
-                                is_deleted: row.is_deleted,
-                                created: row.created,
-                                modified: row.modified
-                            } as Playlist);
-                        });
-                        console.log("User fetched all playlists")
-                        resolve(playlists)
-                    }
-                });
-                db.close()
-            } else {
-                reject(new Error("Unexpected error"))
-            }
-        });
-    }
+	public static async UpdateSession(session: Session): Promise<boolean> {
+		let is_success = false;
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
+		if (db) {
+			try {
+				let sql = "UPDATE session SET user_id = $user_id, is_active = $is_active, session_hash = $session_hash, is_deleted = $is_deleted, created = $created, modified = $modified WHERE session_id = $session_id";
+				let result = await db.run(sql, {
+					$session_id: session.session_id,
+					$user_id: session.user_id,
+					$is_active: session.is_active,
+					$session_hash: session.session_hash,
+					$is_deleted: session.is_deleted,
+					$created: session.created,
+					$modified: session.modified,
+				});
+				is_success = true;
+				console.log("Updated session with id", result);
+				db.close();
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return is_success;
+	}
 
-    public static async GetPlaylistsByUserId(user_id: string): Promise<Playlist[]> {
-        let db = ControllerDatabase.ConnectToDatabase();
-        return new Promise((resolve, reject) => {
-            if (db) {
-                let sql = `SELECT * FROM playlist WHERE user_id = ?`
+	public static async InsertPlaylist(playlist: Playlist): Promise<number> {
+		let playlist_id = -1;
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
+		if (db) {
+			try {
+				let sql = "INSERT INTO playlist (user_id, user_uuid, title, description, is_deleted, created, modified) VALUES ($user_id, $user_uuid, $title, $description, $is_deleted, $created, $modified)";
+				let result = await db.run(sql, {
+					$user_id: playlist.user_id,
+					$user_uuid: playlist.user_uuid,
+					$title: playlist.title,
+					$description: playlist.description,
+					$is_deleted: playlist.is_deleted,
+					$created: playlist.created,
+					$modified: playlist.modified,
+				});
+				playlist_id = result.lastID;
+				console.log("Added playlist with id", playlist_id);
+				db.close();
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return playlist_id;
+	}
 
-                db.all(sql,
-                    [user_id],
-                    (err, rows) => {
-                        if (err){
-                            reject(err)
-                        } else {
-                            let playlists: Playlist[] = [];
-                            rows.forEach((row) => {
-                                playlists.push({
-                                    playlist_id: row.playlist_id,
-                                    user_id: row.user_id,
-                                    title: row.title,
-                                    description: row.description,
-                                    is_deleted: row.is_deleted,
-                                    created: row.created,
-                                    modified: row.modified
-                                } as Playlist);
-                            });
-                            console.log(`Fetched all playlists created by user '${user_id}'`)
-                            resolve(playlists)
-                        }
-                    });
-                db.close()
-            } else {
-                reject(new Error("Unexpected error"))
-            }
-        });
-    }
 
-    private static ConnectToDatabase() {
-        let db;
-        try {
-            console.log("Connecting to database...")
-            let sqlite3 = require('sqlite3').verbose();
-            db = new sqlite3.Database('./database/db.sqlite');
-        } catch (err: any) {
-            console.log('Could not connect to database.')
-        }
-        return db;
-    }
+	public static async GetAllPlaylists(): Promise<Playlist[]> {
+		let playlists: Playlist[] = [];
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
+
+		if (db) {
+			try {
+				let sql = "SELECT * FROM playlist";
+				let rows = await db.all(sql);
+				if (rows) {
+					for (let row of rows) {
+						playlists.push(row as Playlist);
+					}
+					console.log("Fetched all playlists");
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return playlists;
+	}
+
+	public static async GetPlaylistsByUserId(user_id: number): Promise<Playlist[]> {
+		let playlists: Playlist[] = [];
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
+
+		if (db) {
+			try {
+				let sql = "SELECT * FROM playlist WHERE user_id = $user_id";
+				let rows = await db.all(sql, { $user_id: user_id });
+				if (rows) {
+					for (let row of rows) {
+						playlists.push(row as Playlist);
+					}
+					console.log("Fetched playlists created by user with id", user_id);
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return playlists;
+	}
+
+	private static async ConnectToDatabase(): Promise<Database | null> {
+		let db: Database | null = null;
+		try {
+			console.log("Connecting to database...");
+			db = await Database.open("./database/db.sqlite");
+		} catch (err: any) {
+			console.log("Could not connect to database.");
+		}
+		return db;
+	}
 }

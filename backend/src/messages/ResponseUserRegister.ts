@@ -1,6 +1,6 @@
 export interface ResponseUserRegister {
-    user_id: string;
-    is_success: boolean;
-    error_code: number;
-    error_msg: string;
+	user_uuid: string;
+	is_success: boolean;
+	error_code: number;
+	error_msg: string;
 }
