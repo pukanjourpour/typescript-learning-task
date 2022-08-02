@@ -2,18 +2,14 @@
   "entryFile": "src/index.ts",
   "noImplicitAdditionalProperties": "throw-on-extras",
   "controllerPathGlobs": [
-    "./src/controllers/**/Controller*.ts"
+    "src/controllers/**/Controller*.ts"
   ],
   "spec": {
     "outputDirectory": "public",
     "specVersion": 3
   },
-  "swagger": {
-    "outputDirectory": ".",
-    "entryFile": "./src/Server.ts"
-  },
-  "outputDirectory": "./build/src",
   "routes": {
+    "basePath": "/",
     "routesDir": "src"
   }
 }

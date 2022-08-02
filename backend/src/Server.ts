@@ -1,15 +1,15 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { ControllerUsers } from "./controllers/ControllerUsers";
 import { RegisterRoutes } from "./routes";
 import * as swaggerUi from "swagger-ui-express";
-import { ControllerDatabase } from "./controllers/ControllerDatabase";
+import cors from 'cors';
 
 export class Server {
 	public app: express.Express = express();
 	private readonly port: number = 3000;
 
 	constructor() {
+		this.app.use(cors());
 		this.app.use(bodyParser.urlencoded({ extended: true }));
 		this.app.use(bodyParser.json());
 		this.app.use(express.static("public"));

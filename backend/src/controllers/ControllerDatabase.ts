@@ -165,7 +165,7 @@ export class ControllerDatabase extends Controller {
 					$modified: session.modified,
 				});
 				is_success = true;
-				console.log("Updated session with id", result);
+				console.log("Updated session with id", session.session_id);
 				db.close();
 			} catch (err) {
 				console.log(err);

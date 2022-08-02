@@ -10,8 +10,8 @@ classDiagram
     Tag .. ControllerDatabase
     TagsInSong .. ControllerDatabase
         
-    ControllerUser .. User
-    ControllerUser .. Session
+    ControllerUsers .. User
+    ControllerUsers .. Session
     ControllerPlaylists .. Playlist
     ControllerPlaylists .. Session
     ControllerSongs .. Song
@@ -21,7 +21,7 @@ classDiagram
     ControllerTags.. TagsInSong
     ControllerTags.. Session
 
-     ControllerUser .. ControllerDatabase
+     ControllerUsers .. ControllerDatabase
      ControllerSongs .. ControllerDatabase
      ControllerPlaylists .. ControllerDatabase
      ControllerTags .. ControllerDatabase
@@ -31,7 +31,7 @@ classDiagram
         listen()
     }
 
-    class ControllerUser{
+    class ControllerUsers{
         Register(request: RequestUserRegister) ResponseUserRegister
         Login(request: RequestUserLogin) ResponseUserLogin
     }
