@@ -12,6 +12,7 @@ import { ErrorCode } from "../enums/ErrorCode";
 import { ErrorMessage } from "../enums/ErrorMessage";
 import { ResponsePlaylistDelete } from "../messages/ResponsePlaylistDelete";
 import { RequestPlaylistDelete } from "../messages/RequestPlaylistDelete";
+import { ValidateSession } from "../common/ValidateSession";
 
 
 @Route("playlists")
@@ -35,16 +36,10 @@ export class ControllerPlaylists extends Controller {
 		try {
 			const user = await ControllerDatabase.GetUserByUuid(request.user_uuid);
 			if (user && user.user_id) {
-				let validation = await this.ValidateSession(user.user_id, request.session_hash);
+				let validation = await ValidateSession(user.user_id, request.session_hash);
 				if (validation.result_code === 0) {
 					let playlists: Playlist[] = await ControllerDatabase.GetAllPlaylists();
-					let data = this.SeparateAndFilterPlaylists(playlists);
-
-					response.playlist_ids = data.playlist_ids;
-					response.user_uuids = data.user_uuids;
-					response.titles = data.titles;
-					response.descriptions = data.descriptions;
-					response.is_success = true;
+					this.SeparateAndFilterPlaylists(playlists, response);
 				} else {
 					response.error_code = validation.result_code;
 					response.error_msg = validation.result_msg;
@@ -79,17 +74,10 @@ export class ControllerPlaylists extends Controller {
 		try {
 			const user = await ControllerDatabase.GetUserByUuid(request.user_uuid);
 			if (user && user.user_id) {
-				let validation = await this.ValidateSession(user.user_id, request.session_hash);
+				let validation = await ValidateSession(user.user_id, request.session_hash);
 				if (validation.result_code === 0) {
 					let playlists: Playlist[] = await ControllerDatabase.GetPlaylistsByUserId(user.user_id);
-
-					let data = this.SeparateAndFilterPlaylists(playlists);
-
-					response.playlist_ids = data.playlist_ids;
-					response.user_uuids = data.user_uuids;
-					response.titles = data.titles;
-					response.descriptions = data.descriptions;
-					response.is_success = true;
+					this.SeparateAndFilterPlaylists(playlists, response);
 				} else {
 					response.error_code = validation.result_code;
 					response.error_msg = validation.result_msg;
@@ -121,7 +109,7 @@ export class ControllerPlaylists extends Controller {
 		try {
 			const user = await ControllerDatabase.GetUserByUuid(request.user_uuid);
 			if (user && user.user_id) {
-				let validation = await this.ValidateSession(user.user_id, request.session_hash);
+				let validation = await ValidateSession(user.user_id, request.session_hash);
 				if (validation.result_code === 0) {
 					let playlists = await ControllerDatabase.GetPlaylistsByUserId(user.user_id);
 					let playlist_exists = false;
@@ -174,7 +162,7 @@ export class ControllerPlaylists extends Controller {
 		try {
 			const user = await ControllerDatabase.GetUserByUuid(request.user_uuid);
 			if (user && user.user_id) {
-				let validation = await this.ValidateSession(user.user_id, request.session_hash);
+				let validation = await ValidateSession(user.user_id, request.session_hash);
 				if (validation.result_code === 0) {
 					let playlist = await ControllerDatabase.GetPlaylistById(request.playlist_id);
 					if (playlist) {
@@ -202,7 +190,7 @@ export class ControllerPlaylists extends Controller {
 		return response;
 	}
 
-	private SeparateAndFilterPlaylists(playlists: Playlist[]): { playlist_ids: number[], user_uuids: string[], titles: string[], descriptions: string[] } {
+	private SeparateAndFilterPlaylists(playlists: Playlist[], response: ResponsePlaylistGetAll | ResponsePlaylistGetUser): void {
 		let playlist_ids: number[] = [];
 		let user_uuids: string[] = [];
 		let titles: string[] = [];
@@ -217,31 +205,11 @@ export class ControllerPlaylists extends Controller {
 			}
 		}
 
-		return { playlist_ids: playlist_ids, user_uuids: user_uuids, titles: titles, descriptions: descriptions };
-	}
-
-	private async ValidateSession(user_id: number, session_hash: string): Promise<{ result_code: number, result_msg: string }> {
-		const session_existing = await ControllerDatabase.GetSessionByUserId(user_id);
-		let result_code;
-		let result_msg;
-		if (session_existing) {
-			if (session_existing.session_hash === session_hash) {
-				if (session_existing.is_active === 1) {
-					result_code = 0;
-					result_msg = "";
-				} else {
-					result_code = ErrorCode.session_inactive;
-					result_msg = ErrorMessage.session_inactive;
-				}
-			} else {
-				result_code = ErrorCode.session_invalid;
-				result_msg = ErrorMessage.session_invalid;
-			}
-		} else {
-			result_code = ErrorCode.session_does_not_exist;
-			result_msg = ErrorMessage.session_does_not_exist;
-		}
-		return { result_code: result_code, result_msg: result_msg };
+		response.playlist_ids = playlist_ids;
+		response.user_uuids = user_uuids;
+		response.titles = titles;
+		response.descriptions = descriptions;
+		response.is_success = true;
 	}
 
 }

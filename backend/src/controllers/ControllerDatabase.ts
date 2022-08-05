@@ -11,24 +11,18 @@ export class ControllerDatabase extends Controller {
 		let db: Database = await ControllerDatabase.ConnectToDatabase();
 		if (db) {
 			try {
-				let sql = "INSERT INTO user (user_uuid, username, password_hash, is_deleted, created, modified) VALUES ($user_uuid, $username, $password_hash, $is_deleted, $created, $modified)";
-				let result = await db.run(sql, {
-					$user_uuid: user.user_uuid,
-					$username: user.username,
-					$password_hash: user.password_hash,
-					$is_deleted: user.is_deleted,
-					$created: user.created,
-					$modified: user.modified,
-				});
+				let sql = `INSERT INTO user (user_uuid, username, password_hash, is_deleted, created, modified)
+                   VALUES ($user_uuid, $username, $password_hash, $is_deleted, $created, $modified)`;
+				let result = await db.run(sql, ControllerDatabase.GenerateParamsSQL(user));
 				user_id = result.lastID;
-				console.log("Added user with id", user_id);
-				db.close();
+				console.log(`Added user with id ${user_id}`);
 			} catch (err) {
 				console.log(err);
 			}
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return user_id;
 	}
 
@@ -38,12 +32,15 @@ export class ControllerDatabase extends Controller {
 
 		if (db) {
 			try {
-				let sql = "SELECT * FROM user WHERE user_uuid = $user_uuid";
-				user = await db.get(sql, { $user_uuid: user_uuid });
+				let sql = `SELECT *
+                   FROM user
+                   WHERE user_uuid = $user_uuid
+                   LIMIT 1`;
+				user = await db.get(sql, ControllerDatabase.GenerateParamsSQL({ user_uuid: user_uuid }));
 				if (user) {
-					console.log("User with uuid", user_uuid, "was found, id is", user.user_id);
+					console.log(`User with uuid ${user_uuid} was found, id is ${user.user_id}`);
 				} else {
-					console.log("User with uuid", user_uuid, "was not found");
+					console.log(`User with uuid ${user_uuid} was not found`);
 				}
 			} catch (err) {
 				console.log(err);
@@ -51,6 +48,7 @@ export class ControllerDatabase extends Controller {
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return user;
 	}
 
@@ -60,12 +58,15 @@ export class ControllerDatabase extends Controller {
 
 		if (db) {
 			try {
-				let sql = "SELECT * FROM user WHERE username = $username";
-				user = await db.get(sql, { $username: username });
+				let sql = `SELECT *
+                   FROM user
+                   WHERE username = $username
+                   LIMIT 1`;
+				user = await db.get(sql, ControllerDatabase.GenerateParamsSQL({ username: username }));
 				if (user) {
-					console.log("User with username", username, "found, id is", user.user_id);
+					console.log(`User with username ${username} found, id is ${user.user_id}`);
 				} else {
-					console.log("User with username", username, "was not found");
+					console.log(`User with username ${username} was not found`);
 				}
 			} catch (err) {
 				console.log(err);
@@ -73,6 +74,7 @@ export class ControllerDatabase extends Controller {
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return user;
 	}
 
@@ -82,15 +84,19 @@ export class ControllerDatabase extends Controller {
 
 		if (db) {
 			try {
-				let sql = "SELECT * FROM user WHERE username = $username AND password_hash = $password_hash";
-				user = await db.get(sql, {
-					$username: username,
-					$password_hash: password_hash,
-				});
+				let sql = `SELECT *
+                   FROM user
+                   WHERE username = $username
+                     AND password_hash = $password_hash
+                   LIMIT 1`;
+				user = await db.get(sql, ControllerDatabase.GenerateParamsSQL({
+					username: username,
+					password_hash: password_hash,
+				}));
 				if (user) {
-					console.log("Password for", username, "is correct");
+					console.log(`Password for ${username} is correct`);
 				} else {
-					console.log("Password for", username, "is incorrect");
+					console.log(`Password for ${username} is incorrect`);
 				}
 			} catch (err) {
 				console.log(err);
@@ -98,6 +104,7 @@ export class ControllerDatabase extends Controller {
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return user;
 	}
 
@@ -106,24 +113,19 @@ export class ControllerDatabase extends Controller {
 		let db: Database = await ControllerDatabase.ConnectToDatabase();
 		if (db) {
 			try {
-				let sql = "INSERT INTO session (user_id, is_active, session_hash, is_deleted, created, modified) VALUES ($user_id, $is_active, $session_hash, $is_deleted, $created, $modified)";
-				let result = await db.run(sql, {
-					$user_id: session.user_id,
-					$is_active: session.is_active,
-					$session_hash: session.session_hash,
-					$is_deleted: session.is_deleted,
-					$created: session.created,
-					$modified: session.modified,
-				});
+				let sql = `INSERT INTO session (user_id, is_active, session_hash, is_deleted, created, modified)
+                   VALUES ($user_id, $is_active, $session_hash, $is_deleted, $created, $modified)`;
+				let result = await db.run(sql, ControllerDatabase.GenerateParamsSQL(session));
 				session_id = result.lastID;
-				console.log("Added session with id", session_id);
-				db.close();
+				session.session_id = result.lastID;
+				console.log(`Added session with id ${session_id}`);
 			} catch (err) {
 				console.log(err);
 			}
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return session_id;
 	}
 
@@ -133,12 +135,12 @@ export class ControllerDatabase extends Controller {
 
 		if (db) {
 			try {
-				let sql = "SELECT * FROM session WHERE user_id = $user_id";
-				session = await db.get(sql, { $user_id: user_id });
+				let sql = "SELECT * FROM session WHERE user_id = $user_id LIMIT 1";
+				session = await db.get(sql, ControllerDatabase.GenerateParamsSQL({ user_id: user_id }));
 				if (session) {
-					console.log("Session was found for user with id", user_id);
+					console.log(`Session was found for user with id ${user_id}`);
 				} else {
-					console.log("Session was not found for user with id", user_id);
+					console.log(`Session was not found for user with id ${user_id}`);
 				}
 			} catch (err) {
 				console.log(err);
@@ -146,6 +148,7 @@ export class ControllerDatabase extends Controller {
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return session;
 	}
 
@@ -154,25 +157,24 @@ export class ControllerDatabase extends Controller {
 		let db: Database = await ControllerDatabase.ConnectToDatabase();
 		if (db) {
 			try {
-				let sql = "UPDATE session SET user_id = $user_id, is_active = $is_active, session_hash = $session_hash, is_deleted = $is_deleted, created = $created, modified = $modified WHERE session_id = $session_id";
-				let result = await db.run(sql, {
-					$session_id: session.session_id,
-					$user_id: session.user_id,
-					$is_active: session.is_active,
-					$session_hash: session.session_hash,
-					$is_deleted: session.is_deleted,
-					$created: session.created,
-					$modified: session.modified,
-				});
+				let sql = `UPDATE session
+                   SET user_id      = $user_id,
+                       is_active    = $is_active,
+                       session_hash = $session_hash,
+                       is_deleted   = $is_deleted,
+                       created      = $created,
+                       modified     = $modified
+                   WHERE session_id = $session_id`;
+				let result = await db.run(sql, ControllerDatabase.GenerateParamsSQL(session));
 				is_success = true;
-				console.log("Updated session with id", session.session_id);
-				db.close();
+				console.log(`Updated session with id ${session.session_id}`);
 			} catch (err) {
 				console.log(err);
 			}
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return is_success;
 	}
 
@@ -181,25 +183,18 @@ export class ControllerDatabase extends Controller {
 		let db: Database = await ControllerDatabase.ConnectToDatabase();
 		if (db) {
 			try {
-				let sql = "INSERT INTO playlist (user_id, user_uuid, title, description, is_deleted, created, modified) VALUES ($user_id, $user_uuid, $title, $description, $is_deleted, $created, $modified)";
-				let result = await db.run(sql, {
-					$user_id: playlist.user_id,
-					$user_uuid: playlist.user_uuid,
-					$title: playlist.title,
-					$description: playlist.description,
-					$is_deleted: playlist.is_deleted,
-					$created: playlist.created,
-					$modified: playlist.modified,
-				});
+				let sql = `INSERT INTO playlist (user_id, user_uuid, title, description, is_deleted, created, modified)
+                   VALUES ($user_id, $user_uuid, $title, $description, $is_deleted, $created, $modified)`;
+				let result = await db.run(sql, ControllerDatabase.GenerateParamsSQL(playlist));
 				playlist_id = result.lastID;
-				console.log("Added playlist with id", playlist_id);
-				db.close();
+				console.log(`Added playlist with id ${playlist_id}`);
 			} catch (err) {
 				console.log(err);
 			}
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return playlist_id;
 	}
 
@@ -208,21 +203,24 @@ export class ControllerDatabase extends Controller {
 		let db: Database = await ControllerDatabase.ConnectToDatabase();
 		if (db) {
 			try {
-				let sql = "UPDATE playlist SET is_deleted = $is_deleted, modified = $modified WHERE playlist_id = $playlist_id";
-				let result = await db.run(sql, {
-					$playlist_id: playlist_id,
-					$is_deleted: 1,
-					$modified: Date.now(),
-				});
+				let sql = `UPDATE playlist
+                   SET is_deleted = $is_deleted,
+                       modified   = $modified
+                   WHERE playlist_id = $playlist_id`;
+				let result = await db.run(sql, ControllerDatabase.GenerateParamsSQL({
+					playlist_id: playlist_id,
+					is_deleted: 1,
+					modified: Date.now(),
+				}));
 				is_success = true;
-				console.log("Soft deleted playlist with id", playlist_id);
-				db.close();
+				console.log(`Soft deleted playlist with id ${playlist_id}`);
 			} catch (err) {
 				console.log(err);
 			}
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return is_success;
 	}
 
@@ -232,13 +230,14 @@ export class ControllerDatabase extends Controller {
 
 		if (db) {
 			try {
-				let sql = "SELECT * FROM playlist";
+				let sql = `SELECT *
+                   FROM playlist`;
 				let rows = await db.all(sql);
 				if (rows) {
 					for (let row of rows) {
 						playlists.push(row as Playlist);
 					}
-					console.log("Fetched all playlists");
+					console.log(`Fetched all playlists`);
 				}
 			} catch (err) {
 				console.log(err);
@@ -246,6 +245,7 @@ export class ControllerDatabase extends Controller {
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return playlists;
 	}
 
@@ -255,13 +255,15 @@ export class ControllerDatabase extends Controller {
 
 		if (db) {
 			try {
-				let sql = "SELECT * FROM playlist WHERE user_id = $user_id";
-				let rows = await db.all(sql, { $user_id: user_id });
+				let sql = `SELECT *
+                   FROM playlist
+                   WHERE user_id = $user_id`;
+				let rows = await db.all(sql, ControllerDatabase.GenerateParamsSQL({ user_id: user_id }));
 				if (rows) {
 					for (let row of rows) {
 						playlists.push(row as Playlist);
 					}
-					console.log("Fetched playlists created by user with id", user_id);
+					console.log(`Fetched playlists created by user with id ${user_id}`);
 				}
 			} catch (err) {
 				console.log(err);
@@ -269,6 +271,7 @@ export class ControllerDatabase extends Controller {
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return playlists;
 	}
 
@@ -278,12 +281,12 @@ export class ControllerDatabase extends Controller {
 
 		if (db) {
 			try {
-				let sql = "SELECT * FROM playlist WHERE playlist_id = $playlist_id";
-				playlist = await db.get(sql, { $playlist_id: playlist_id });
+				let sql = "SELECT * FROM playlist WHERE playlist_id = $playlist_id LIMIT 1";
+				playlist = await db.get(sql, ControllerDatabase.GenerateParamsSQL({ playlist_id: playlist_id }));
 				if (playlist) {
-					console.log("Playlist was found for user with id", playlist_id);
+					console.log(`Playlist was found for user with id ${playlist_id}`);
 				} else {
-					console.log("Playlist was not found for user with id", playlist_id);
+					console.log(`Playlist was not found for user with id ${playlist_id}`);
 				}
 			} catch (err) {
 				console.log(err);
@@ -291,13 +294,24 @@ export class ControllerDatabase extends Controller {
 		} else {
 			throw new Error("Unexpected error");
 		}
+		await db.close();
 		return playlist;
 	}
+
+	private static GenerateParamsSQL(values: object) {
+		let length = Object.keys(values).length;
+		let obj = {};
+		for (let i = 0; i < length; i++) {
+			let key = Object.keys(values)[i];
+			obj["$" + key] = values[key];
+		}
+		return obj;
+	}
+
 
 	private static async ConnectToDatabase(): Promise<Database | null> {
 		let db: Database | null = null;
 		try {
-			// console.log("Connecting to database...");
 			db = await Database.open("./database/db.sqlite");
 		} catch (err: any) {
 			console.log("Could not connect to database.");

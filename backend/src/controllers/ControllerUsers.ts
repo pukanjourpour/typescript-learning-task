@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import Session from "../models/Session";
 import { RequestUserGetUsername } from "../messages/RequestUserGetUsername";
 import { ResponseUserGetUsername } from "../messages/ResponseUserGetUsername";
-import Playlist from "../models/Playlist";
+import { ValidateSession } from "../common/ValidateSession";
 
 @Route("users")
 export class ControllerUsers extends Controller {
@@ -79,10 +79,8 @@ export class ControllerUsers extends Controller {
 						session_existing.modified = Date.now();
 						await ControllerDatabase.UpdateSession(session_existing);
 						response.session_hash = session_existing.session_hash;
-
 					} else {
 						let session_new = {
-							session_id: uuidv4(),
 							user_id: user_validated.user_id,
 							is_active: 1,
 							// TODO
@@ -126,7 +124,7 @@ export class ControllerUsers extends Controller {
 		try {
 			const user = await ControllerDatabase.GetUserByUuid(request.user_uuid);
 			if (user && user.user_id) {
-				let validation = await this.ValidateSession(user.user_id, request.session_hash);
+				let validation = await ValidateSession(user.user_id, request.session_hash);
 				if (validation.result_code === 0) {
 					const requested_user = await ControllerDatabase.GetUserByUuid(request.requested_user_uuid);
 						if (requested_user) {
@@ -151,28 +149,28 @@ export class ControllerUsers extends Controller {
 	}
 
 	// TODO: move ValidateSession() to separate file
-	private async ValidateSession(user_id: number, session_hash: string): Promise<{ result_code: number, result_msg: string }> {
-		const session_existing = await ControllerDatabase.GetSessionByUserId(user_id);
-		let result_code;
-		let result_msg;
-		if (session_existing) {
-			if (session_existing.session_hash === session_hash) {
-				if (session_existing.is_active === 1) {
-					result_code = 0;
-					result_msg = "";
-				} else {
-					result_code = ErrorCode.session_inactive;
-					result_msg = ErrorMessage.session_inactive;
-				}
-			} else {
-				result_code = ErrorCode.session_invalid;
-				result_msg = ErrorMessage.session_invalid;
-			}
-		} else {
-			result_code = ErrorCode.session_does_not_exist;
-			result_msg = ErrorMessage.session_does_not_exist;
-		}
-		return { result_code: result_code, result_msg: result_msg };
-	}
+	// private async ValidateSession(user_id: number, session_hash: string): Promise<{ result_code: number, result_msg: string }> {
+	// 	const session_existing = await ControllerDatabase.GetSessionByUserId(user_id);
+	// 	let result_code;
+	// 	let result_msg;
+	// 	if (session_existing) {
+	// 		if (session_existing.session_hash === session_hash) {
+	// 			if (session_existing.is_active === 1) {
+	// 				result_code = 0;
+	// 				result_msg = "";
+	// 			} else {
+	// 				result_code = ErrorCode.session_inactive;
+	// 				result_msg = ErrorMessage.session_inactive;
+	// 			}
+	// 		} else {
+	// 			result_code = ErrorCode.session_invalid;
+	// 			result_msg = ErrorMessage.session_invalid;
+	// 		}
+	// 	} else {
+	// 		result_code = ErrorCode.session_does_not_exist;
+	// 		result_msg = ErrorMessage.session_does_not_exist;
+	// 	}
+	// 	return { result_code: result_code, result_msg: result_msg };
+	// }
 
 }
