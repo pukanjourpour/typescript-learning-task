@@ -1,71 +1,25 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import { Typography } from "@mui/material";
+import "./styles-components.css"
 
-interface HeaderProps {
+interface Props {
 	isLogged: boolean;
+	onPageChange: (newPage: string) => void;
+	activePage: string;
 }
 
-interface HeaderState {
+interface State {
 }
 
-const StyledHeader = styled.div`
-  width: 100vw;
-  height: 5rem;
-
-  .header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    height: 100%;
-    padding: 0 1rem;
-    border-bottom: 1px solid black;
-  }
-
-  .main-navbar {
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    list-style: none;
-
-  }
-
-  .login-navbar {
-    padding: 0;
-    margin: 0;
-    height: 90%;
-    gap: 1rem;
-    display: flex;
-    justify-content: flex-end;
-    list-style: none;
-  }
-
-  a {
-    text-decoration: none;
-  }
-
-  .navbar-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0 10px;
-    height: 100%;
-    color: black;
-  }
-
-  .navbar-item:hover {
-    color: blue;
-  }
-`;
-
-export default class Navbar extends React.Component<HeaderProps, HeaderState> {
-	constructor(props: HeaderProps) {
+export default class Navbar extends React.Component<Props, State> {
+	constructor(props: Props) {
 		super(props);
 	}
+
+	handleClick = (newPage: string) => {
+		this.props.onPageChange(newPage);
+	};
 
 	render() {
 		let accountMenu: React.ReactNode;
@@ -73,52 +27,50 @@ export default class Navbar extends React.Component<HeaderProps, HeaderState> {
 		if (this.props.isLogged) {
 			accountMenu =
 				<ul className={"login-navbar"}>
-					<Link to={"#"}>
-						<li className={"navbar-item"}>
-							<Typography>Log out</Typography>
-						</li>
-					</Link>
+					<li>
+						<div className={"navbar-item"} onClick={() => this.handleClick("logout")}><Typography variant={"button"}>Log
+							out</Typography></div>
+					</li>
 				</ul>;
 		} else {
 			accountMenu = (
 				<ul className={"login-navbar"}>
-					<Link to={"login"}>
-						<li className={"navbar-item"}>
-							<Typography>Login</Typography>
-						</li>
-					</Link>
-					<Link to={"register"}>
-						<li className={"navbar-item"}>
-							<Typography>Register</Typography>
-						</li>
-					</Link>
+					<li>
+						<div className={(this.props.activePage === "login" ? "active " : "") + "navbar-item"}
+								 onClick={() => this.handleClick("login")}
+						><Typography variant={"button"}>Login</Typography></div>
+					</li>
+					<li>
+						<div className={(this.props.activePage === "register" ? "active " : "") + "navbar-item"}
+								 onClick={() => this.handleClick("register")}><Typography variant={"button"}>Register</Typography></div>
+					</li>
 				</ul>);
 		}
 
 		return (
-			<StyledHeader>
+			<div className={"header-container"}>
 				<div className={"header"}>
 					<Typography variant="h5" className={"logo"}>Playlist app</Typography>
 					<ul className={"main-navbar"}>
-						<Link to={"/"}>
-							<li className={"navbar-item"}>
-								<Typography>Home</Typography>
-							</li>
-						</Link>
-						<Link to={"/playlists"}>
-							<li className={"navbar-item"}>
-								<Typography>Explore playlists</Typography>
-							</li>
-						</Link>
-						<Link to={"/playlists/my"}>
-							<li className={"navbar-item"}>
-								<Typography>My playlists</Typography>
-							</li>
-						</Link>
+						<li>
+							<div className={(this.props.activePage === "home" ? "active " : "") + "navbar-item"}
+									 onClick={() => this.handleClick("home")}><Typography variant={"button"}>Home</Typography></div>
+						</li>
+						<li>
+							<div className={(this.props.activePage === "all_playlists" ? "active " : "") + "navbar-item"}
+									 onClick={() => this.handleClick("all_playlists")}><Typography variant={"button"}>Browse
+								playlists</Typography></div>
+						</li>
+						<li>
+							<div className={(this.props.activePage === "my_playlists" ? "active " : "") + "navbar-item"}
+									 onClick={() => this.handleClick("my_playlists")}><Typography variant={"button"}>My
+								playlists</Typography></div>
+
+						</li>
 					</ul>
 					{accountMenu}
 				</div>
-			</StyledHeader>
+			</div>
 		);
 	}
 }

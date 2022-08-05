@@ -1,0 +1,56 @@
+/*Navbar*/
+
+.header-container {
+    width: 100vw;
+    height: 5rem;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 0 1rem;
+    border-bottom: 1px solid black;
+}
+
+.logo {
+    cursor: default;
+}
+
+.login-navbar, .main-navbar {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: 90%;
+    display: flex;
+    gap: 1rem;
+}
+
+.main-navbar {
+    justify-content: center;
+
+}
+
+.login-navbar {
+    justify-content: flex-end;
+}
+
+.navbar-item {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 10px;
+    height: 100%;
+    color: black;
+}
+
+.navbar-item:hover {
+    color: blue;
+}
+
+.navbar-item.active {
+    color: blue;
+}

@@ -1,4 +1,4 @@
-export interface User {
+export default interface User {
 	user_id: number | null;
 	user_uuid: string;
 	username: string;

@@ -1,7 +1,7 @@
 import { Controller } from "tsoa";
-import { User } from "../models/User";
+import User from "../models/User";
 import Database from "sqlite-async";
-import { Session } from "../models/Session";
+import Session from "../models/Session";
 import Playlist from "../models/Playlist";
 
 export class ControllerDatabase extends Controller {
@@ -203,6 +203,28 @@ export class ControllerDatabase extends Controller {
 		return playlist_id;
 	}
 
+	public static async DeletePlaylist(playlist_id: number): Promise<boolean> {
+		let is_success = false;
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
+		if (db) {
+			try {
+				let sql = "UPDATE playlist SET is_deleted = $is_deleted, modified = $modified WHERE playlist_id = $playlist_id";
+				let result = await db.run(sql, {
+					$playlist_id: playlist_id,
+					$is_deleted: 1,
+					$modified: Date.now(),
+				});
+				is_success = true;
+				console.log("Soft deleted playlist with id", playlist_id);
+				db.close();
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return is_success;
+	}
 
 	public static async GetAllPlaylists(): Promise<Playlist[]> {
 		let playlists: Playlist[] = [];
@@ -250,10 +272,32 @@ export class ControllerDatabase extends Controller {
 		return playlists;
 	}
 
+	public static async GetPlaylistById(playlist_id): Promise<Playlist | null> {
+		let playlist: Playlist = null;
+		let db: Database = await ControllerDatabase.ConnectToDatabase();
+
+		if (db) {
+			try {
+				let sql = "SELECT * FROM playlist WHERE playlist_id = $playlist_id";
+				playlist = await db.get(sql, { $playlist_id: playlist_id });
+				if (playlist) {
+					console.log("Playlist was found for user with id", playlist_id);
+				} else {
+					console.log("Playlist was not found for user with id", playlist_id);
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			throw new Error("Unexpected error");
+		}
+		return playlist;
+	}
+
 	private static async ConnectToDatabase(): Promise<Database | null> {
 		let db: Database | null = null;
 		try {
-			console.log("Connecting to database...");
+			// console.log("Connecting to database...");
 			db = await Database.open("./database/db.sqlite");
 		} catch (err: any) {
 			console.log("Could not connect to database.");

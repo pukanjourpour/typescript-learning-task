@@ -81,6 +81,81 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ResponsePlaylistGetUser": {
+				"properties": {
+					"playlist_ids": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"user_uuids": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"titles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"descriptions": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"is_success": {
+						"type": "boolean"
+					},
+					"error_code": {
+						"type": "number",
+						"format": "double"
+					},
+					"error_msg": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"playlist_ids",
+					"user_uuids",
+					"titles",
+					"descriptions",
+					"is_success",
+					"error_code",
+					"error_msg"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RequestPlaylistGetUser": {
+				"properties": {
+					"session_hash": {
+						"type": "string"
+					},
+					"user_uuid": {
+						"type": "string"
+					},
+					"request_hash": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"session_hash",
+					"user_uuid",
+					"request_hash",
+					"timestamp"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ResponsePlaylistCreate": {
 				"properties": {
 					"playlist_id": {
@@ -136,6 +211,36 @@
 					"timestamp",
 					"title",
 					"description"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RequestPlaylistDelete": {
+				"properties": {
+					"session_hash": {
+						"type": "string"
+					},
+					"user_uuid": {
+						"type": "string"
+					},
+					"playlist_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"request_hash": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"session_hash",
+					"user_uuid",
+					"playlist_id",
+					"request_hash",
+					"timestamp"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -243,6 +348,60 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"ResponseUserGetUsername": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"is_success": {
+						"type": "boolean"
+					},
+					"error_code": {
+						"type": "number",
+						"format": "double"
+					},
+					"error_msg": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"is_success",
+					"error_code",
+					"error_msg"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RequestUserGetUsername": {
+				"properties": {
+					"requested_user_uuid": {
+						"type": "string"
+					},
+					"session_hash": {
+						"type": "string"
+					},
+					"user_uuid": {
+						"type": "string"
+					},
+					"request_hash": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"requested_user_uuid",
+					"session_hash",
+					"user_uuid",
+					"request_hash",
+					"timestamp"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -288,6 +447,35 @@
 				}
 			}
 		},
+		"/playlists/user": {
+			"post": {
+				"operationId": "GetUserPlaylists",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponsePlaylistGetUser"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestPlaylistGetUser"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/playlists/create": {
 			"post": {
 				"operationId": "CreatePlaylist",
@@ -311,6 +499,35 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/RequestPlaylistCreate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/playlists/delete": {
+			"post": {
+				"operationId": "DeletePlaylist",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponsePlaylistCreate"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestPlaylistDelete"
 							}
 						}
 					}
@@ -369,6 +586,35 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/RequestUserLogin"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/get/username": {
+			"post": {
+				"operationId": "GetUsernameByUuid",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseUserGetUsername"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestUserGetUsername"
 							}
 						}
 					}

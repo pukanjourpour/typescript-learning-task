@@ -1,4 +1,4 @@
-export interface ResponsePlaylistGetAll {
+export interface ResponsePlaylistGetUser {
 	playlist_ids: number[];
 	user_uuids: string[];
 	titles: string[];
