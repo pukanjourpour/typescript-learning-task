@@ -60,16 +60,16 @@ export class ControllerUsers {
 		return result;
 	}
 
-	public static async getUsernameByUuid(user_uuid: string, session_hash: string, requested_uuid: string): Promise<ResponseUserGetUsername | null> {
+	public static async getUsernameByUuid(userUuid: string, sessionHash: string, requestedUuid: string): Promise<ResponseUserGetUsername | null> {
 		let result = null;
 		try {
 			const response = await axios.post<ResponseUserGetUsername>(
-				"http://localhost:3000/users/get/username",
+				"http://localhost:3000/users/get-username",
 				{
 					//TODO: create request hash
-					requested_user_uuid: requested_uuid,
-					session_hash: session_hash,
-					user_uuid: user_uuid,
+					requested_user_uuid: requestedUuid,
+					session_hash: sessionHash,
+					user_uuid: userUuid,
 					request_hash: "some hash",
 					timestamp: Date.now(),
 				} as RequestUserGetUsername,

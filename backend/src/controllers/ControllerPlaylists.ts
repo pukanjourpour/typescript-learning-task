@@ -112,14 +112,14 @@ export class ControllerPlaylists extends Controller {
 				let validation = await ValidateSession(user.user_id, request.session_hash);
 				if (validation.result_code === 0) {
 					let playlists = await ControllerDatabase.GetPlaylistsByUserId(user.user_id);
-					let playlist_exists = false;
-					for (let p of playlists) {
-						if (p.title === request.title) {
-							playlist_exists = true;
+					let playlist_exists = null;
+					for (let playlist of playlists) {
+						if (playlist.title === request.title) {
+							playlist_exists = playlist;
 							break;
 						}
 					}
-					if (!playlist_exists) {
+					if (!playlist_exists || playlist_exists.is_deleted === 1) {
 						let playlist_new = {
 							user_id: user.user_id,
 							user_uuid: request.user_uuid,

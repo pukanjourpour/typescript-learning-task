@@ -1,15 +1,16 @@
 import React from "react";
 import { ResponseUserLogin } from "../../../backend/src/messages/ResponseUserLogin";
 import { ControllerUsers } from "../controllers/ControllerUsers";
-import { Button, Grid, TextField } from "@mui/material";
+import { Alert, Button, Grid, TextField } from "@mui/material";
 
 interface Props {
-	onLoginAttempt: (result: ResponseUserLogin | null, username: string) => void;
+	onLogin: (result: ResponseUserLogin, username: string) => void;
 }
 
 interface State {
 	username: string;
 	password: string;
+	errorMsg: string | null;
 }
 
 export default class ViewLogin extends React.Component<Props, State> {
@@ -18,19 +19,39 @@ export default class ViewLogin extends React.Component<Props, State> {
 		this.state = {
 			username: "",
 			password: "",
+			errorMsg: null,
 		};
 	}
 
 	handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		// TODO: Login info validation\
-		let result = await ControllerUsers.login(this.state.username, this.state.password);
-		this.props.onLoginAttempt(result, this.state.username);
+		let trimmedUsername = this.state.username.trim();
+		let trimmedPassword = this.state.password.trim();
+		let usernameRegex = new RegExp("^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$");
 
-		// TODO: display authentication result
+		if (usernameRegex.test(trimmedUsername)) {
+			let result = await ControllerUsers.login(trimmedUsername, trimmedPassword);
+			if (result) {
+				if (result.is_success) {
+					this.props.onLogin(result, trimmedUsername);
+				} else {
+					this.setState({ errorMsg: result.error_msg });
+				}
+			} else {
+				this.setState({ errorMsg: "Network error" });
+			}
+		} else {
+			this.setState({ errorMsg: "Such username is prohibited" });
+		}
 	};
 
 	render() {
+		let alert = null;
+
+		if (this.state.errorMsg) {
+			alert = <Grid item><Alert severity="error">{this.state.errorMsg}</Alert></Grid>;
+		}
+
 		return (
 			<div>
 				<form onSubmit={this.handleSubmit}>
@@ -43,6 +64,7 @@ export default class ViewLogin extends React.Component<Props, State> {
 							<TextField required id={"passwordInput"} label="Password" type={"password"}
 												 onChange={(val) => this.setState({ password: val.currentTarget.value })} />
 						</Grid>
+						{alert}
 						<Grid item>
 							<Button type="submit" variant={"contained"}>Login</Button>
 						</Grid>

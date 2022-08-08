@@ -13,9 +13,9 @@ interface Props {
 
 interface State {
 	authenticated: boolean;
-	user_uuid: string;
+	userUuid: string;
 	username: string;
-	session_hash: string;
+	sessionHash: string;
 	currentPage: string;
 }
 
@@ -25,16 +25,14 @@ export default class App extends React.Component<Props, State> {
 		this.state = { authenticated: false, currentPage: "home" } as State;
 	}
 
-	onLoginAttempt = (response: ResponseUserLogin | null, username: string) => {
-		if (response && response.is_success) {
-			this.setState({
-				authenticated: response.is_success,
-				username: username,
-				user_uuid: response.user_uuid,
-				session_hash: response.session_hash,
-			});
-			this.onPageChange("home");
-		}
+	onLogin = (response: ResponseUserLogin, username: string) => {
+		this.setState({
+			authenticated: response.is_success,
+			username: username,
+			userUuid: response.user_uuid,
+			sessionHash: response.session_hash,
+		});
+		this.onPageChange("home");
 	};
 
 	onPageChange = (newPage: string) => {
@@ -49,21 +47,22 @@ export default class App extends React.Component<Props, State> {
 				page = <ViewHome authenticated={this.state.authenticated} username={this.state.username} />;
 				break;
 			case "login":
-				page = <ViewLogin onLoginAttempt={this.onLoginAttempt} />;
+				page = <ViewLogin onLogin={this.onLogin} />;
 				break;
 			case "register":
-				page = <ViewRegister onLoginAttempt={this.onLoginAttempt} />;
+				page = <ViewRegister onLogin={this.onLogin} />;
 				break;
 			case "my_playlists":
-				page = <ViewMyPlaylists authenticated={this.state.authenticated} sessionHash={this.state.session_hash} userUuid={this.state.user_uuid}/>
+				page = <ViewMyPlaylists authenticated={this.state.authenticated} sessionHash={this.state.sessionHash}
+																userUuid={this.state.userUuid} />;
 				break;
 			case "all_playlists":
-				page = <ViewAllPlaylists authenticated={this.state.authenticated} sessionHash={this.state.session_hash} userUuid={this.state.user_uuid}/>
+				page = <ViewAllPlaylists authenticated={this.state.authenticated} sessionHash={this.state.sessionHash}
+																 userUuid={this.state.userUuid} />;
 				break;
 			default:
 				page = <h1>Page not found</h1>;
 		}
-
 
 		return (
 			<div>

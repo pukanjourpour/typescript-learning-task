@@ -109,7 +109,7 @@ export class ControllerUsers extends Controller {
 		return response;
 	}
 
-	@Post("get/username")
+	@Post("get-username")
 	public async GetUsernameByUuid(@Body() request: RequestUserGetUsername) {
 		let response = {
 			username: "",
