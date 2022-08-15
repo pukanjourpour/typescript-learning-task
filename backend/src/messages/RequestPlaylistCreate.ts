@@ -1,8 +1,6 @@
-export interface RequestPlaylistCreate {
-	session_hash: string;
-	user_uuid: string;
-	request_hash: string;
-	timestamp: number;
+import { SecuredRequest } from "./SecuredRequest";
+
+export interface RequestPlaylistCreate extends SecuredRequest {
 	title: string;
 	description: string;
 }

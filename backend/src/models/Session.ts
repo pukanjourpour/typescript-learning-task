@@ -1,9 +1,9 @@
 export default interface Session {
 	session_id: number | null;
-	user_id: number;
+	session_user_id: number;
 	is_active: number;
 	session_hash: string;
-	is_deleted: number;
-	created: number;
-	modified: number;
+	session_is_deleted: number;
+	session_created: number;
+	session_modified: number;
 }

@@ -13,7 +13,10 @@ import { ErrorMessage } from "../enums/ErrorMessage";
 import { ResponsePlaylistDelete } from "../messages/ResponsePlaylistDelete";
 import { RequestPlaylistDelete } from "../messages/RequestPlaylistDelete";
 import { ValidateSession } from "../common/ValidateSession";
+import { getLogger } from "log4js";
 
+const logger = getLogger("ControllerPlaylists");
+logger.level = "info"
 
 @Route("playlists")
 export class ControllerPlaylists extends Controller {
@@ -21,36 +24,35 @@ export class ControllerPlaylists extends Controller {
 	@Post("all")
 	public async GetAllPlaylists(@Body() request: RequestPlaylistGetAll): Promise<ResponsePlaylistGetAll> {
 		const response = {
-			playlist_ids: [],
-			user_uuids: [],
-			titles: [],
-			descriptions: [],
+			playlists: [],
 			is_success: false,
 			error_code: 0,
 			error_msg: "",
 		} as ResponsePlaylistGetAll;
 
-		console.log("\n__________________________________")
-		console.log("GetAllPlaylists")
+		logger.info("Requested: GetAllPlaylists")
 
 		try {
-			const user = await ControllerDatabase.GetUserByUuid(request.user_uuid);
-			if (user && user.user_id) {
-				let validation = await ValidateSession(user.user_id, request.session_hash);
-				if (validation.result_code === 0) {
-					let playlists: Playlist[] = await ControllerDatabase.GetAllPlaylists();
-					this.SeparateAndFilterPlaylists(playlists, response);
+			let validated_user_id = await ValidateSession(request, response);
+			if (validated_user_id !== -1) {
+				let playlists = await ControllerDatabase.GetAllPlaylists();
+				if (playlists) {
+					response.playlists = playlists;
+					response.is_success = true;
 				} else {
-					response.error_code = validation.result_code;
-					response.error_msg = validation.result_msg;
+					response.error_code = ErrorCode.unexpected_error;
+					response.error_msg = ErrorMessage.unexpected_error;
 				}
-			} else {
-				response.error_code = ErrorCode.wrong_uuid;
-				response.error_msg = ErrorMessage.wrong_uuid;
 			}
 		} catch (err) {
 			response.error_code = ErrorCode.unexpected_error;
 			response.error_msg = ErrorMessage.unexpected_error;
+		}
+
+		if (!response.is_success) {
+			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
+		} else {
+			logger.info("Request fulfilled successfully\n")
 		}
 
 		return response;
@@ -59,36 +61,35 @@ export class ControllerPlaylists extends Controller {
 	@Post("user")
 	public async GetUserPlaylists(@Body() request: RequestPlaylistGetUser): Promise<ResponsePlaylistGetUser> {
 		const response = {
-			playlist_ids: [],
-			user_uuids: [],
-			titles: [],
-			descriptions: [],
+			playlists: [],
 			is_success: false,
 			error_code: 0,
 			error_msg: "",
 		} as ResponsePlaylistGetUser;
 
-		console.log("\n__________________________________")
-		console.log("GetUserPlaylists")
+		logger.info("Requested: GetUserPlaylists")
 
 		try {
-			const user = await ControllerDatabase.GetUserByUuid(request.user_uuid);
-			if (user && user.user_id) {
-				let validation = await ValidateSession(user.user_id, request.session_hash);
-				if (validation.result_code === 0) {
-					let playlists: Playlist[] = await ControllerDatabase.GetPlaylistsByUserId(user.user_id);
-					this.SeparateAndFilterPlaylists(playlists, response);
+			let validated_user_id = await ValidateSession(request, response);
+			if (validated_user_id !== -1) {
+				let playlists = await ControllerDatabase.GetPlaylistsByUserId(validated_user_id);
+				if (playlists) {
+					response.playlists = playlists;
+					response.is_success = true;
 				} else {
-					response.error_code = validation.result_code;
-					response.error_msg = validation.result_msg;
+					response.error_code = ErrorCode.unexpected_error;
+					response.error_msg = ErrorMessage.unexpected_error;
 				}
-			} else {
-				response.error_code = ErrorCode.wrong_uuid;
-				response.error_msg = ErrorMessage.wrong_uuid;
 			}
 		} catch (err) {
 			response.error_code = ErrorCode.unexpected_error;
 			response.error_msg = ErrorMessage.unexpected_error;
+		}
+
+		if (!response.is_success) {
+			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
+		} else {
+			logger.info("Request fulfilled successfully\n")
 		}
 
 		return response;
@@ -103,46 +104,51 @@ export class ControllerPlaylists extends Controller {
 			error_msg: "",
 		} as ResponsePlaylistCreate;
 
-		console.log("\n__________________________________")
-		console.log("CreatePlaylist")
+		logger.info("Requested: CreatePlaylist")
 
 		try {
-			const user = await ControllerDatabase.GetUserByUuid(request.user_uuid);
-			if (user && user.user_id) {
-				let validation = await ValidateSession(user.user_id, request.session_hash);
-				if (validation.result_code === 0) {
-					let playlists = await ControllerDatabase.GetPlaylistsByUserId(user.user_id);
-					let playlist_exists = null;
-					for (let playlist of playlists) {
-						if (playlist.title === request.title) {
-							playlist_exists = playlist;
-							break;
-						}
+			let validated_user_id = await ValidateSession(request, response);
+			if (validated_user_id !== -1) {
+				let playlists = await ControllerDatabase.GetPlaylistsByUserId(validated_user_id);
+				let playlist_exists = null;
+				for (let playlist of playlists) {
+					if (playlist.playlist_title === request.title) {
+						playlist_exists = playlist;
+						break;
 					}
-					if (!playlist_exists || playlist_exists.is_deleted === 1) {
-						let playlist_new = {
-							user_id: user.user_id,
-							user_uuid: request.user_uuid,
-							title: request.title,
-							description: request.description,
-							is_deleted: 0,
-							created: Date.now(),
-							modified: Date.now(),
-						} as Playlist;
-						response.playlist_id = await ControllerDatabase.InsertPlaylist(playlist_new);
+				}
+				if (!playlist_exists) {
+					let playlist_new = {
+						playlist_user_id: validated_user_id,
+						playlist_user_uuid: request.user_uuid,
+						playlist_title: request.title,
+						description: request.description,
+						playlist_is_deleted: 0,
+						playlist_created: Date.now(),
+						playlist_modified: Date.now(),
+					} as Playlist;
+					let playlist_id = await ControllerDatabase.InsertPlaylist(playlist_new);
+					if (playlist_id !== -1) {
+						response.playlist_id = playlist_id;
 						response.is_success = true;
 					} else {
-						response.error_code = ErrorCode.playlist_already_exists;
-						response.error_msg = ErrorMessage.playlist_already_exists;
+						response.error_code = ErrorCode.unexpected_error;
+						response.error_msg = ErrorMessage.unexpected_error;
 					}
 				} else {
-					response.error_code = validation.result_code;
-					response.error_msg = validation.result_msg;
+					response.error_code = ErrorCode.playlist_already_exists;
+					response.error_msg = ErrorMessage.playlist_already_exists;
 				}
 			}
 		} catch (err) {
 			response.error_code = ErrorCode.unexpected_error;
 			response.error_msg = ErrorMessage.unexpected_error;
+		}
+
+		if (!response.is_success) {
+			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
+		} else {
+			logger.info("Request fulfilled successfully\n")
 		}
 
 		return response;
@@ -157,59 +163,36 @@ export class ControllerPlaylists extends Controller {
 			error_msg: "",
 		} as ResponsePlaylistDelete;
 
-		console.log("\n__________________________________")
-		console.log("DeletePlaylist")
+		logger.info("Requested: DeletePlaylist")
 		try {
-			const user = await ControllerDatabase.GetUserByUuid(request.user_uuid);
-			if (user && user.user_id) {
-				let validation = await ValidateSession(user.user_id, request.session_hash);
-				if (validation.result_code === 0) {
-					let playlist = await ControllerDatabase.GetPlaylistById(request.playlist_id);
-					if (playlist) {
-						let is_success = await ControllerDatabase.DeletePlaylist(request.playlist_id);
-						if (is_success) {
-							response.playlist_id = request.playlist_id;
-							response.is_success = true;
-						} else {
-							response.error_code = ErrorCode.delete_error;
-							response.error_msg = ErrorMessage.delete_error;
-						}
+			let validated_user_id = await ValidateSession(request, response);
+			if (validated_user_id !== -1) {
+				let playlist = await ControllerDatabase.GetPlaylistById(request.playlist_id);
+				if (playlist) {
+					let is_success = await ControllerDatabase.DeletePlaylist(request.playlist_id);
+					if (is_success) {
+						response.playlist_id = request.playlist_id;
+						response.is_success = true;
 					} else {
-						response.error_code = ErrorCode.playlist_does_not_exist;
-						response.error_msg = ErrorMessage.playlist_does_not_exist;
+						response.error_code = ErrorCode.delete_error;
+						response.error_msg = ErrorMessage.delete_error;
 					}
 				} else {
-					response.error_code = validation.result_code;
-					response.error_msg = validation.result_msg;
+					response.error_code = ErrorCode.playlist_does_not_exist;
+					response.error_msg = ErrorMessage.playlist_does_not_exist;
 				}
 			}
 		} catch (err) {
 			response.error_code = ErrorCode.unexpected_error;
 			response.error_msg = ErrorMessage.unexpected_error;
 		}
-		return response;
-	}
 
-	private SeparateAndFilterPlaylists(playlists: Playlist[], response: ResponsePlaylistGetAll | ResponsePlaylistGetUser): void {
-		let playlist_ids: number[] = [];
-		let user_uuids: string[] = [];
-		let titles: string[] = [];
-		let descriptions: string[] = [];
-
-		for (let playlist of playlists) {
-			if (playlist.playlist_id && playlist.is_deleted !== 1) {
-				playlist_ids.push(playlist.playlist_id);
-				user_uuids.push(playlist.user_uuid);
-				titles.push(playlist.title);
-				descriptions.push(playlist.description);
-			}
+		if (!response.is_success) {
+			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
+		} else {
+			logger.info("Request fulfilled successfully\n")
 		}
 
-		response.playlist_ids = playlist_ids;
-		response.user_uuids = user_uuids;
-		response.titles = titles;
-		response.descriptions = descriptions;
-		response.is_success = true;
+		return response;
 	}
-
 }

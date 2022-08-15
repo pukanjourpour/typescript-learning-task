@@ -1,6 +1,5 @@
-export interface ResponseUserRegister {
+import { ResponseGeneric } from "./ResponseGeneric";
+
+export interface ResponseUserRegister extends ResponseGeneric {
 	user_uuid: string;
-	is_success: boolean;
-	error_code: number;
-	error_msg: string;
 }

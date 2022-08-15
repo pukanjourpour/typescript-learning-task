@@ -16,7 +16,7 @@ export default class ViewHome extends React.Component<Props, State> {
 
 	}
 
-	render() {
+	render = () => {
 		return <Typography variant={"h2"} mt={"1rem"} align={"center"}>Welcome, {this.props.authenticated ? this.props.username : "guest"}!</Typography>;
 	}
 }

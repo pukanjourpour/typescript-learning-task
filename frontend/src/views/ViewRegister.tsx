@@ -62,7 +62,7 @@ export default class ViewRegister extends React.Component<Props, State> {
 		}
 	};
 
-	render() {
+	render = () => {
 		let alert = null;
 
 		if (this.state.errorMsg) {

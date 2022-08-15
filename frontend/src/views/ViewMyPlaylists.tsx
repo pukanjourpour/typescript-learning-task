@@ -21,19 +21,25 @@ interface Props {
 	authenticated: boolean,
 	sessionHash: string,
 	userUuid: string,
+	username: string
 }
 
 interface State {
 	playlists: Playlist[],
 	newPlaylistTitle: string,
 	newPlaylistDescription: string,
-	selectedPlaylist: Playlist | null
+	selectedPlaylist: Playlist | null,
 }
 
 export default class ViewMyPlaylists extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
-		this.state = { playlists: [], newPlaylistTitle: "", newPlaylistDescription: "", selectedPlaylist: null };
+		this.state = {
+			playlists: [],
+			newPlaylistTitle: "",
+			newPlaylistDescription: "",
+			selectedPlaylist: null,
+		};
 	}
 
 	handleCreate = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -44,8 +50,8 @@ export default class ViewMyPlaylists extends React.Component<Props, State> {
 		if (result) {
 			this.state.playlists.push({
 				playlist_id: result.playlist_id,
-				user_uuid: this.props.userUuid,
-				title: this.state.newPlaylistTitle,
+				playlist_user_uuid: this.props.userUuid,
+				playlist_title: this.state.newPlaylistTitle,
 				description: this.state.newPlaylistDescription,
 			} as Playlist);
 			this.setState({ playlists: this.state.playlists });
@@ -65,40 +71,32 @@ export default class ViewMyPlaylists extends React.Component<Props, State> {
 				this.setState({ playlists: filtered });
 			}
 		}
-		// TODO: display creation result
 	};
 
-	componentDidMount() {
+	componentDidMount = async () => {
 		if (this.props.authenticated) {
-			ControllerPlaylists.getUserPlaylists(this.props.sessionHash, this.props.userUuid).then(
-				(result: ResponsePlaylistGetUser | null) => {
-					let playlists: Playlist[] = [];
-					if (result) {
-						let len = result.playlist_ids.length;
-						for (let i = 0; i < len; i++) {
-							playlists.push({
-								playlist_id: result.playlist_ids[i],
-								user_uuid: result.user_uuids[i],
-								title: result.titles[i],
-								description: result.descriptions[i],
-							} as Playlist);
-						}
-					}
-					this.setState({ playlists: playlists });
-				},
-			);
+			let result = await ControllerPlaylists.getUserPlaylists(this.props.sessionHash, this.props.userUuid);
+			if (result) {
+				if (result.is_success) {
+					this.setState({ playlists: result.playlists });
+				} else {
+					// do something
+				}
+			} else {
+				//	do something
+			}
 		}
-	}
+	};
 
-	render() {
+	render = () => {
 		let content;
-
-		const ariaLabel = { "aria-label": "description" };
 
 		if (this.props.authenticated) {
 			if (this.state.selectedPlaylist) {
 				content =
-					<ViewPlaylist selectedPlaylist={this.state.selectedPlaylist} userUuid={this.props.userUuid}
+					<ViewPlaylist selectedPlaylist={this.state.selectedPlaylist}
+												selectedPlaylistAuthor={this.props.username}
+												userUuid={this.props.userUuid}
 												sessionHash={this.props.sessionHash} />;
 			} else {
 				content =
@@ -109,23 +107,23 @@ export default class ViewMyPlaylists extends React.Component<Props, State> {
 									<List>
 										<ListSubheader><Typography variant={"h4"}>My Playlists</Typography></ListSubheader>
 										{this.state.playlists.map((playlist) =>
-											<ListItemButton onClick={() => {
-												this.setState({ selectedPlaylist: playlist });
-											}}>
-												<ListItem key={playlist.playlist_id} secondaryAction={
-													<IconButton onClick={() => this.handleDelete(playlist.playlist_id)} edge="end"
-																			aria-label="delete">
-														<Delete />
-													</IconButton>
-												}>
+											<ListItem key={playlist.playlist_id} secondaryAction={
+												<IconButton onClick={() => this.handleDelete(playlist.playlist_id)} edge="end"
+																		aria-label="delete">
+													<Delete />
+												</IconButton>
+											}>
+												<ListItemButton onClick={() => {
+													this.setState({ selectedPlaylist: playlist });
+												}}>
 													<ListItemAvatar>
 														<Avatar>
 															<Folder />
 														</Avatar>
 													</ListItemAvatar>
-													<ListItemText primary={playlist.title} secondary={playlist.description} />
-												</ListItem>
-											</ListItemButton>)}
+													<ListItemText primary={playlist.playlist_title} secondary={playlist.description} />
+												</ListItemButton>
+											</ListItem>)}
 									</List>
 								</Grid>
 							</Grid>
@@ -136,12 +134,12 @@ export default class ViewMyPlaylists extends React.Component<Props, State> {
 										<Grid item xs={8}>
 											<Input required onChange={(val) => {
 												this.setState({ newPlaylistTitle: val.currentTarget.value });
-											}} placeholder="Title" inputProps={ariaLabel} />
+											}} placeholder="Title" inputProps={{ "aria-label": "description" }} />
 										</Grid>
 										<Grid item xs={8}>
 											<Input required onChange={(val) => {
 												this.setState({ newPlaylistDescription: val.currentTarget.value });
-											}} placeholder="Description" inputProps={ariaLabel} />
+											}} placeholder="Description" inputProps={{ "aria-label": "description" }} />
 										</Grid>
 										<Grid item>
 											<Button type="submit" variant="contained" color="success">
@@ -159,6 +157,6 @@ export default class ViewMyPlaylists extends React.Component<Props, State> {
 				<Typography variant={"h3"} mt={"1rem"} align={"center"}>You must login to view playlists</Typography>;
 		}
 		return content;
-	}
+	};
 
 };

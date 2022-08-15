@@ -6,33 +6,116 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"Song": {
+				"properties": {
+					"song_id": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"song_user_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"song_user_uuid": {
+						"type": "string"
+					},
+					"file_path": {
+						"type": "string"
+					},
+					"song_title": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"album": {
+						"type": "string"
+					},
+					"song_is_deleted": {
+						"type": "number",
+						"format": "double"
+					},
+					"song_created": {
+						"type": "number",
+						"format": "double"
+					},
+					"song_modified": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"song_id",
+					"song_user_id",
+					"song_user_uuid",
+					"file_path",
+					"song_title",
+					"artist",
+					"album",
+					"song_is_deleted",
+					"song_created",
+					"song_modified"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Playlist": {
+				"properties": {
+					"playlist_id": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"playlist_user_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"playlist_user_uuid": {
+						"type": "string"
+					},
+					"playlist_title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"songs": {
+						"items": {
+							"$ref": "#/components/schemas/Song"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"playlist_is_deleted": {
+						"type": "number",
+						"format": "double"
+					},
+					"playlist_created": {
+						"type": "number",
+						"format": "double"
+					},
+					"playlist_modified": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"playlist_id",
+					"playlist_user_id",
+					"playlist_user_uuid",
+					"playlist_title",
+					"description",
+					"songs",
+					"playlist_is_deleted",
+					"playlist_created",
+					"playlist_modified"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ResponsePlaylistGetAll": {
 				"properties": {
-					"playlist_ids": {
-						"items": {
-							"type": "number",
-							"format": "double"
-						},
-						"type": "array"
-					},
-					"user_uuids": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"titles": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"descriptions": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
 					"is_success": {
 						"type": "boolean"
 					},
@@ -42,26 +125,29 @@
 					},
 					"error_msg": {
 						"type": "string"
+					},
+					"playlists": {
+						"items": {
+							"$ref": "#/components/schemas/Playlist"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
-					"playlist_ids",
-					"user_uuids",
-					"titles",
-					"descriptions",
 					"is_success",
 					"error_code",
-					"error_msg"
+					"error_msg",
+					"playlists"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
 			"RequestPlaylistGetAll": {
 				"properties": {
-					"session_hash": {
+					"user_uuid": {
 						"type": "string"
 					},
-					"user_uuid": {
+					"session_hash": {
 						"type": "string"
 					},
 					"request_hash": {
@@ -73,8 +159,8 @@
 					}
 				},
 				"required": [
-					"session_hash",
 					"user_uuid",
+					"session_hash",
 					"request_hash",
 					"timestamp"
 				],
@@ -83,31 +169,6 @@
 			},
 			"ResponsePlaylistGetUser": {
 				"properties": {
-					"playlist_ids": {
-						"items": {
-							"type": "number",
-							"format": "double"
-						},
-						"type": "array"
-					},
-					"user_uuids": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"titles": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"descriptions": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
 					"is_success": {
 						"type": "boolean"
 					},
@@ -117,26 +178,29 @@
 					},
 					"error_msg": {
 						"type": "string"
+					},
+					"playlists": {
+						"items": {
+							"$ref": "#/components/schemas/Playlist"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
-					"playlist_ids",
-					"user_uuids",
-					"titles",
-					"descriptions",
 					"is_success",
 					"error_code",
-					"error_msg"
+					"error_msg",
+					"playlists"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
 			"RequestPlaylistGetUser": {
 				"properties": {
-					"session_hash": {
+					"user_uuid": {
 						"type": "string"
 					},
-					"user_uuid": {
+					"session_hash": {
 						"type": "string"
 					},
 					"request_hash": {
@@ -148,8 +212,8 @@
 					}
 				},
 				"required": [
-					"session_hash",
 					"user_uuid",
+					"session_hash",
 					"request_hash",
 					"timestamp"
 				],
@@ -158,10 +222,6 @@
 			},
 			"ResponsePlaylistCreate": {
 				"properties": {
-					"playlist_id": {
-						"type": "number",
-						"format": "double"
-					},
 					"is_success": {
 						"type": "boolean"
 					},
@@ -171,23 +231,27 @@
 					},
 					"error_msg": {
 						"type": "string"
+					},
+					"playlist_id": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
-					"playlist_id",
 					"is_success",
 					"error_code",
-					"error_msg"
+					"error_msg",
+					"playlist_id"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
 			"RequestPlaylistCreate": {
 				"properties": {
-					"session_hash": {
+					"user_uuid": {
 						"type": "string"
 					},
-					"user_uuid": {
+					"session_hash": {
 						"type": "string"
 					},
 					"request_hash": {
@@ -205,8 +269,8 @@
 					}
 				},
 				"required": [
-					"session_hash",
 					"user_uuid",
+					"session_hash",
 					"request_hash",
 					"timestamp",
 					"title",
@@ -217,15 +281,11 @@
 			},
 			"RequestPlaylistDelete": {
 				"properties": {
-					"session_hash": {
-						"type": "string"
-					},
 					"user_uuid": {
 						"type": "string"
 					},
-					"playlist_id": {
-						"type": "number",
-						"format": "double"
+					"session_hash": {
+						"type": "string"
 					},
 					"request_hash": {
 						"type": "string"
@@ -233,23 +293,221 @@
 					"timestamp": {
 						"type": "number",
 						"format": "double"
+					},
+					"playlist_id": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
-					"session_hash",
 					"user_uuid",
-					"playlist_id",
+					"session_hash",
 					"request_hash",
-					"timestamp"
+					"timestamp",
+					"playlist_id"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ResponseUserRegister": {
+			"ResponseSongGetPlaylist": {
+				"properties": {
+					"is_success": {
+						"type": "boolean"
+					},
+					"error_code": {
+						"type": "number",
+						"format": "double"
+					},
+					"error_msg": {
+						"type": "string"
+					},
+					"songs": {
+						"items": {
+							"$ref": "#/components/schemas/Song"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"songs"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RequestSongGetPlaylist": {
 				"properties": {
 					"user_uuid": {
 						"type": "string"
 					},
+					"session_hash": {
+						"type": "string"
+					},
+					"request_hash": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "number",
+						"format": "double"
+					},
+					"playlist_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"user_uuid",
+					"session_hash",
+					"request_hash",
+					"timestamp",
+					"playlist_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResponseSongGet": {
+				"properties": {
+					"is_success": {
+						"type": "boolean"
+					},
+					"error_code": {
+						"type": "number",
+						"format": "double"
+					},
+					"error_msg": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"album": {
+						"type": "string"
+					},
+					"file_b64": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"title",
+					"artist",
+					"album",
+					"file_b64"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RequestSongGet": {
+				"properties": {
+					"user_uuid": {
+						"type": "string"
+					},
+					"session_hash": {
+						"type": "string"
+					},
+					"request_hash": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "number",
+						"format": "double"
+					},
+					"song_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"user_uuid",
+					"session_hash",
+					"request_hash",
+					"timestamp",
+					"song_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResponseSongAdd": {
+				"properties": {
+					"is_success": {
+						"type": "boolean"
+					},
+					"error_code": {
+						"type": "number",
+						"format": "double"
+					},
+					"error_msg": {
+						"type": "string"
+					},
+					"song_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"song_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RequestSongAdd": {
+				"properties": {
+					"user_uuid": {
+						"type": "string"
+					},
+					"session_hash": {
+						"type": "string"
+					},
+					"request_hash": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "number",
+						"format": "double"
+					},
+					"playlist_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"album": {
+						"type": "string"
+					},
+					"file_b64": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user_uuid",
+					"session_hash",
+					"request_hash",
+					"timestamp",
+					"playlist_id",
+					"title",
+					"artist",
+					"album",
+					"file_b64"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResponseSongAddToPlaylist": {
+				"properties": {
 					"is_success": {
 						"type": "boolean"
 					},
@@ -262,10 +520,125 @@
 					}
 				},
 				"required": [
-					"user_uuid",
 					"is_success",
 					"error_code",
 					"error_msg"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RequestSongAddToPlaylist": {
+				"properties": {
+					"user_uuid": {
+						"type": "string"
+					},
+					"session_hash": {
+						"type": "string"
+					},
+					"request_hash": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "number",
+						"format": "double"
+					},
+					"playlist_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"song_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"user_uuid",
+					"session_hash",
+					"request_hash",
+					"timestamp",
+					"playlist_id",
+					"song_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResponseSongDelete": {
+				"properties": {
+					"is_success": {
+						"type": "boolean"
+					},
+					"error_code": {
+						"type": "number",
+						"format": "double"
+					},
+					"error_msg": {
+						"type": "string"
+					},
+					"song_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"song_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RequestSongDelete": {
+				"properties": {
+					"user_uuid": {
+						"type": "string"
+					},
+					"session_hash": {
+						"type": "string"
+					},
+					"request_hash": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "number",
+						"format": "double"
+					},
+					"song_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"user_uuid",
+					"session_hash",
+					"request_hash",
+					"timestamp",
+					"song_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResponseUserRegister": {
+				"properties": {
+					"is_success": {
+						"type": "boolean"
+					},
+					"error_code": {
+						"type": "number",
+						"format": "double"
+					},
+					"error_msg": {
+						"type": "string"
+					},
+					"user_uuid": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"user_uuid"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -297,12 +670,6 @@
 			},
 			"ResponseUserLogin": {
 				"properties": {
-					"session_hash": {
-						"type": "string"
-					},
-					"user_uuid": {
-						"type": "string"
-					},
 					"is_success": {
 						"type": "boolean"
 					},
@@ -312,14 +679,20 @@
 					},
 					"error_msg": {
 						"type": "string"
+					},
+					"session_hash": {
+						"type": "string"
+					},
+					"user_uuid": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"session_hash",
-					"user_uuid",
 					"is_success",
 					"error_code",
-					"error_msg"
+					"error_msg",
+					"session_hash",
+					"user_uuid"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -351,9 +724,6 @@
 			},
 			"ResponseUserGetUsername": {
 				"properties": {
-					"username": {
-						"type": "string"
-					},
 					"is_success": {
 						"type": "boolean"
 					},
@@ -363,26 +733,26 @@
 					},
 					"error_msg": {
 						"type": "string"
+					},
+					"username": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"username",
 					"is_success",
 					"error_code",
-					"error_msg"
+					"error_msg",
+					"username"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
 			"RequestUserGetUsername": {
 				"properties": {
-					"requested_user_uuid": {
+					"user_uuid": {
 						"type": "string"
 					},
 					"session_hash": {
-						"type": "string"
-					},
-					"user_uuid": {
 						"type": "string"
 					},
 					"request_hash": {
@@ -391,14 +761,17 @@
 					"timestamp": {
 						"type": "number",
 						"format": "double"
+					},
+					"requested_user_uuid": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"requested_user_uuid",
-					"session_hash",
 					"user_uuid",
+					"session_hash",
 					"request_hash",
-					"timestamp"
+					"timestamp",
+					"requested_user_uuid"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -534,6 +907,151 @@
 				}
 			}
 		},
+		"/songs/get": {
+			"post": {
+				"operationId": "GetPlaylistSongs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseSongGetPlaylist"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestSongGetPlaylist"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/songs/get-one": {
+			"post": {
+				"operationId": "GetSong",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseSongGet"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestSongGet"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/songs/add": {
+			"post": {
+				"operationId": "AddSong",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseSongAdd"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestSongAdd"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/songs/add-to-playlist": {
+			"post": {
+				"operationId": "AddSongToPlaylist",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseSongAddToPlaylist"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestSongAddToPlaylist"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/songs/delete": {
+			"post": {
+				"operationId": "DeleteSong",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseSongDelete"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestSongDelete"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/users/register": {
 			"post": {
 				"operationId": "Register",
@@ -592,7 +1110,7 @@
 				}
 			}
 		},
-		"/users/get/username": {
+		"/users/get-username": {
 			"post": {
 				"operationId": "GetUsernameByUuid",
 				"responses": {

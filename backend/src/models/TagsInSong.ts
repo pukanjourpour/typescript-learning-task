@@ -1,8 +1,8 @@
 export default interface TagsInSong {
-	tags_in_song_id: number | null;
-	song_id: number;
-	tag_id: number;
-	is_deleted: number;
-	created: number;
-	modified: number;
+	tis_id: number | null;
+	tis_song_id: number;
+	tis_tag_id: number;
+	tis_is_deleted: number;
+	tis_created: number;
+	tis_modified: number;
 }

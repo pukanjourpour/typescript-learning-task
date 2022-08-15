@@ -1,7 +1,5 @@
-export interface RequestUserGetUsername {
-	requested_user_uuid: string
-	session_hash: string;
-	user_uuid: string;
-	request_hash: string;
-	timestamp: number;
+import { SecuredRequest } from "./SecuredRequest";
+
+export interface RequestUserGetUsername extends SecuredRequest {
+	requested_user_uuid: string;
 }

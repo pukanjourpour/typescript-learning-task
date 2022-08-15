@@ -9,6 +9,7 @@ export class Server {
 	private readonly port: number = 3000;
 
 	constructor() {
+		this.app.use(express.json({ limit: 100000000 }));
 		this.app.use(cors());
 		this.app.use(bodyParser.urlencoded({ extended: true }));
 		this.app.use(bodyParser.json());

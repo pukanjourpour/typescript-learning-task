@@ -1,6 +1,5 @@
-export interface ResponseUserGetUsername {
+import { ResponseGeneric } from "./ResponseGeneric";
+
+export interface ResponseUserGetUsername extends ResponseGeneric {
 	username: string;
-	is_success: boolean;
-	error_code: number;
-	error_msg: string;
 }

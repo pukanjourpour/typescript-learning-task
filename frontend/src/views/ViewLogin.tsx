@@ -45,7 +45,7 @@ export default class ViewLogin extends React.Component<Props, State> {
 		}
 	};
 
-	render() {
+	render = () => {
 		let alert = null;
 
 		if (this.state.errorMsg) {

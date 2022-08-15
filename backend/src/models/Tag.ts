@@ -1,7 +1,7 @@
 export default interface Tag {
 	tag_id: number | null;
-	name: string;
-	is_deleted: number;
-	created: number;
-	modified: number;
+	tag_title: string;
+	tag_is_deleted: number;
+	tag_created: number;
+	tag_modified: number;
 }

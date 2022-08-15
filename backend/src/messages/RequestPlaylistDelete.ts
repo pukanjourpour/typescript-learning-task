@@ -1,7 +1,5 @@
-export interface RequestPlaylistDelete {
-	session_hash: string;
-	user_uuid: string;
+import { SecuredRequest } from "./SecuredRequest";
+
+export interface RequestPlaylistDelete extends SecuredRequest {
 	playlist_id: number;
-	request_hash: string;
-	timestamp: number;
 }

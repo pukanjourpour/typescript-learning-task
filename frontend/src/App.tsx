@@ -53,7 +53,8 @@ export default class App extends React.Component<Props, State> {
 				page = <ViewRegister onLogin={this.onLogin} />;
 				break;
 			case "my_playlists":
-				page = <ViewMyPlaylists authenticated={this.state.authenticated} sessionHash={this.state.sessionHash}
+				page = <ViewMyPlaylists authenticated={this.state.authenticated} username={this.state.username}
+																sessionHash={this.state.sessionHash}
 																userUuid={this.state.userUuid} />;
 				break;
 			case "all_playlists":

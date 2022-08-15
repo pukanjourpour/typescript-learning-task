@@ -39,7 +39,7 @@ classDiagram
     class ControllerSongs {
         GetAllPlaylistSongs(request: RequestSongGetAllFromPlaylist) ResponseSongGetAllFromPlaylist
         GetSong(request: RequestSongGet) ResponseSongGet
-        AddSong(request: RequestSongAdd) ResponseSongAdd
+        FormAddSong(request: RequestSongAdd) ResponseSongAdd
         UpdateSong(request: RequestSongUpdate) ResponseSongUpdate
         DeleteSong(request: RequestSongDelete) ResponseSongDelete
     }

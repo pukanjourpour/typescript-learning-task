@@ -1,6 +1,5 @@
-export interface ResponsePlaylistCreate {
+import { ResponseGeneric } from "./ResponseGeneric";
+
+export interface ResponsePlaylistCreate extends ResponseGeneric {
 	playlist_id: number;
-	is_success: boolean;
-	error_code: number;
-	error_msg: string;
 }
