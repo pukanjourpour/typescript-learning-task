@@ -14,10 +14,19 @@
 /frontend/npm-debug.log*
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
+/frontend/package-lock.json
+/frontend/yarn.lock
+/frontend/node_modules
 
 /backend/.eslintrc
 /backend/.prettierignore
 /backend/.prettierrc.json
-/frontend/node_modules/
 /backend/build/
 /backend/src/routes.ts
+/backend/package-lock.json
+/backend/yarn.lock
+/backend/database/music/
+/backend/node_modules
+/frontend/.babelrc
+/frontend/.eslintrc.json
+/frontend/webpack.config.ts
