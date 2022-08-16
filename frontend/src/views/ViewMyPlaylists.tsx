@@ -1,7 +1,6 @@
 import React from "react";
 import Playlist from "../../../backend/src/models/Playlist";
 import { ControllerPlaylists } from "../controllers/ControllerPlaylists";
-import { ResponsePlaylistGetUser } from "../../../backend/src/messages/ResponsePlaylistGetUser";
 import {
 	Avatar,
 	Button,
@@ -16,6 +15,7 @@ import {
 } from "@mui/material";
 import { Folder, Delete } from "@mui/icons-material";
 import ViewPlaylist from "./ViewPlaylist";
+import i18next from "../i18n";
 
 interface Props {
 	authenticated: boolean,
@@ -105,7 +105,7 @@ export default class ViewMyPlaylists extends React.Component<Props, State> {
 							<Grid container item xs={8} direction={"column"}>
 								<Grid item xs={5}>
 									<List>
-										<ListSubheader><Typography variant={"h4"}>My Playlists</Typography></ListSubheader>
+										<ListSubheader><Typography variant={"h4"}>{i18next.t("my-playlists").toString()}</Typography></ListSubheader>
 										{this.state.playlists.map((playlist) =>
 											<ListItem key={playlist.playlist_id} secondaryAction={
 												<IconButton onClick={() => this.handleDelete(playlist.playlist_id)} edge="end"
@@ -130,20 +130,20 @@ export default class ViewMyPlaylists extends React.Component<Props, State> {
 							<Grid item xs={4}>
 								<form onSubmit={this.handleCreate}>
 									<Grid container direction={"column"} alignItems={"center"} spacing={3}>
-										<Grid item><Typography variant={"h5"}>Create a playlist</Typography></Grid>
+										<Grid item><Typography variant={"h5"}>{i18next.t("create-new-playlist").toString()}</Typography></Grid>
 										<Grid item xs={8}>
 											<Input required onChange={(val) => {
 												this.setState({ newPlaylistTitle: val.currentTarget.value });
-											}} placeholder="Title" inputProps={{ "aria-label": "description" }} />
+											}} placeholder={i18next.t("title").toString()} inputProps={{ "aria-label": "title" }} />
 										</Grid>
 										<Grid item xs={8}>
 											<Input required onChange={(val) => {
 												this.setState({ newPlaylistDescription: val.currentTarget.value });
-											}} placeholder="Description" inputProps={{ "aria-label": "description" }} />
+											}} placeholder={i18next.t("description").toString()} inputProps={{ "aria-label": "description" }} />
 										</Grid>
 										<Grid item>
 											<Button type="submit" variant="contained" color="success">
-												<Typography variant={"button"}>Create new</Typography>
+												<Typography variant={"button"}>{i18next.t("create-new-playlist-btn").toString()}</Typography>
 											</Button>
 										</Grid>
 									</Grid>
@@ -154,7 +154,7 @@ export default class ViewMyPlaylists extends React.Component<Props, State> {
 			}
 		} else {
 			content =
-				<Typography variant={"h3"} mt={"1rem"} align={"center"}>You must login to view playlists</Typography>;
+				<Typography variant={"h3"} mt={"1rem"} align={"center"}>{i18next.t("login-required-playlists").toString()}</Typography>;
 		}
 		return content;
 	};

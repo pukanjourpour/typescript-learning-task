@@ -2,6 +2,7 @@ import React from "react";
 import { ResponseUserLogin } from "../../../backend/src/messages/ResponseUserLogin";
 import { ControllerUsers } from "../controllers/ControllerUsers";
 import { Alert, Button, Grid, TextField } from "@mui/material";
+import i18next from "../i18n";
 
 interface Props {
 	onLogin: (result: ResponseUserLogin, username: string) => void;
@@ -38,10 +39,10 @@ export default class ViewLogin extends React.Component<Props, State> {
 					this.setState({ errorMsg: result.error_msg });
 				}
 			} else {
-				this.setState({ errorMsg: "Network error" });
+				this.setState({ errorMsg: i18next.t("network-error" )});
 			}
 		} else {
-			this.setState({ errorMsg: "Such username is prohibited" });
+			this.setState({ errorMsg: i18next.t("prohibited-username") });
 		}
 	};
 
@@ -57,16 +58,16 @@ export default class ViewLogin extends React.Component<Props, State> {
 				<form onSubmit={this.handleSubmit}>
 					<Grid container direction={"column"} alignItems={"center"} rowSpacing={3} pt={3}>
 						<Grid item>
-							<TextField required id={"usernameInput"} label="Username"
+							<TextField required id={"usernameInput"} label={i18next.t("username").toString()}
 												 onChange={(val) => this.setState({ username: val.currentTarget.value })} />
 						</Grid>
 						<Grid item>
-							<TextField required id={"passwordInput"} label="Password" type={"password"}
+							<TextField required id={"passwordInput"} label={i18next.t("password").toString()} type={"password"}
 												 onChange={(val) => this.setState({ password: val.currentTarget.value })} />
 						</Grid>
 						{alert}
 						<Grid item>
-							<Button type="submit" variant={"contained"}>Login</Button>
+							<Button type="submit" variant={"contained"}>{i18next.t("login").toString()}</Button>
 						</Grid>
 					</Grid>
 				</form>

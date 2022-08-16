@@ -88,11 +88,13 @@ export default class ViewSong extends React.Component<Props, State> {
 			if (result) {
 				if (result.is_success) {
 					console.log("Added to playlist");
+					//	TODO Render message
 				}
 			} else {
-
+				//	TODO Render message
 			}
 		} else {
+			//	TODO Render message
 		}
 
 	};

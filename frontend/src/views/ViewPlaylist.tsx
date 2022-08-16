@@ -13,9 +13,10 @@ import {
 	ListSubheader,
 	Typography,
 } from "@mui/material";
-import { Delete, Folder, MusicNote, UploadFile } from "@mui/icons-material";
+import { Delete, MusicNote} from "@mui/icons-material";
 import ViewSong from "./ViewSong";
 import FormAddSong from "./components/FormAddSong";
+import i18next from "../i18n";
 
 interface Props {
 	selectedPlaylist: Playlist,
@@ -42,18 +43,6 @@ export default class ViewPlaylist extends React.Component<Props, State> {
 		};
 	}
 
-	componentDidMount = async () => {
-		// if (this.props.selectedPlaylist.playlist_id) {
-		// 	let result = await ControllerSongs.getPlaylistSongs(this.props.sessionHash, this.props.userUuid, this.props.selectedPlaylist.playlist_id);
-		// 	if (result) {
-		// 		console.log(result)
-		// 		this.setState({ songs: result.songs });
-		// 	} else {
-		// 		// do something
-		// 	}
-		// }
-	};
-
 	handleCreate = async (event: React.FormEvent<HTMLFormElement>, newSongTitle: string, newSongArtist: string, newSongAlbum: string, newFileB64: string) => {
 		event.preventDefault();
 		// TODO: Song info validation
@@ -67,9 +56,9 @@ export default class ViewPlaylist extends React.Component<Props, State> {
 				artist: newSongArtist,
 				album: newSongAlbum,
 			} as Song);
-			this.setState({ songs: this.state.songs, songAddedMessage: "Song is added" });
+			this.setState({ songs: this.state.songs, songAddedMessage: i18next.t("song-added") });
 		} else {
-			this.setState({songAddedMessage: "Could not add song"})
+			this.setState({songAddedMessage: i18next.t("song-not-added")})
 		}
 		// TODO: display creation result
 	};
@@ -134,7 +123,7 @@ export default class ViewPlaylist extends React.Component<Props, State> {
 								{this.state.selectedSongId ?
 									<ViewSong selectedPlaylistId={this.props.selectedPlaylist.playlist_id} selectedSongId={this.state.selectedSongId} userUuid={this.props.userUuid}
 														sessionHash={this.props.sessionHash} /> :
-									<Typography align={"center"} variant={"h4"}>No song is chosen</Typography>}
+									<Typography align={"center"} variant={"h4"}>{i18next.t("no-chosen-song").toString()}</Typography>}
 							</Grid>
 							<hr/>
 							{this.state.isOwner ?

@@ -1,7 +1,7 @@
 import React from "react";
 import Playlist from "../../../backend/src/models/Playlist";
 import { ControllerPlaylists } from "../controllers/ControllerPlaylists";
-import { ResponsePlaylistGetAll } from "../../../backend/src/messages/ResponsePlaylistGetAll";
+import i18next from "../i18n";
 
 import {
 	Avatar,
@@ -76,7 +76,7 @@ export default class ViewAllPlaylists extends React.Component<Props, State> {
 						<Grid container item xs={8} direction={"column"}>
 							<Grid item xs={5}>
 								<List>
-									<ListSubheader><Typography variant={"h4"}>Browse Playlists</Typography></ListSubheader>
+									<ListSubheader><Typography variant={"h4"}>{i18next.t("browse-playlists").toString()}</Typography></ListSubheader>
 									{this.state.playlists.map((playlist, index) =>
 										<ListItemButton key={playlist.playlist_id} onClick={() => {
 											this.setState({ selectedPlaylist: playlist, selectedPlaylistAuthor: this.state.authors[index] });
@@ -108,7 +108,7 @@ export default class ViewAllPlaylists extends React.Component<Props, State> {
 			}
 		} else {
 			content =
-				<Typography variant={"h3"} mt={"1rem"} align={"center"}>You must login to view playlists</Typography>;
+				<Typography variant={"h3"} mt={"1rem"} align={"center"}>{i18next.t("login-required-playlists").toString()}</Typography>;
 		}
 		return content;
 	}

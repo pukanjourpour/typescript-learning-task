@@ -1,5 +1,6 @@
 import React from "react";
 import { Typography } from "@mui/material";
+import i18next from "../i18n";
 
 interface Props {
 	authenticated: boolean,
@@ -16,7 +17,9 @@ export default class ViewHome extends React.Component<Props, State> {
 
 	}
 
+
 	render = () => {
-		return <Typography variant={"h2"} mt={"1rem"} align={"center"}>Welcome, {this.props.authenticated ? this.props.username : "guest"}!</Typography>;
-	}
+		return <Typography variant={"h2"} mt={"1rem"}
+											 align={"center"}> {i18next.t("welcome") + ", " + (this.props.authenticated ? this.props.username : i18next.t("guest"))}</Typography>;
+	};
 }
