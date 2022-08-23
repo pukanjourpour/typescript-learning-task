@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import { RegisterRoutes } from "./routes";
 import * as swaggerUi from "swagger-ui-express";
-import cors from 'cors';
+import cors from "cors";
 
 export class Server {
 	public app: express.Express = express();
@@ -38,5 +38,4 @@ export class Server {
 		);
 		return listen;
 	}
-
 }

@@ -1,4 +1,3 @@
-import { SecuredRequest } from "./SecuredRequest";
+import { RequestSecured } from "./RequestSecured";
 
-export interface RequestPlaylistGetUser extends SecuredRequest {
-}
+export interface RequestPlaylistGetUser extends RequestSecured {}

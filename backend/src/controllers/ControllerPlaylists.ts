@@ -14,15 +14,17 @@ import { ResponsePlaylistDelete } from "../messages/ResponsePlaylistDelete";
 import { RequestPlaylistDelete } from "../messages/RequestPlaylistDelete";
 import { ValidateSession } from "../common/ValidateSession";
 import { getLogger } from "log4js";
+import { findIndex } from 'lodash';
 
 const logger = getLogger("ControllerPlaylists");
-logger.level = "info"
+logger.level = "info";
 
 @Route("playlists")
 export class ControllerPlaylists extends Controller {
-
 	@Post("all")
-	public async GetAllPlaylists(@Body() request: RequestPlaylistGetAll): Promise<ResponsePlaylistGetAll> {
+	public async GetAllPlaylists(
+		@Body() request: RequestPlaylistGetAll,
+	): Promise<ResponsePlaylistGetAll> {
 		const response = {
 			playlists: [],
 			is_success: false,
@@ -30,7 +32,7 @@ export class ControllerPlaylists extends Controller {
 			error_msg: "",
 		} as ResponsePlaylistGetAll;
 
-		logger.info("Requested: GetAllPlaylists")
+		logger.info("Requested: GetAllPlaylists");
 
 		try {
 			let validated_user_id = await ValidateSession(request, response);
@@ -52,14 +54,16 @@ export class ControllerPlaylists extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;
 	}
 
 	@Post("user")
-	public async GetUserPlaylists(@Body() request: RequestPlaylistGetUser): Promise<ResponsePlaylistGetUser> {
+	public async GetUserPlaylists(
+		@Body() request: RequestPlaylistGetUser,
+	): Promise<ResponsePlaylistGetUser> {
 		const response = {
 			playlists: [],
 			is_success: false,
@@ -67,7 +71,7 @@ export class ControllerPlaylists extends Controller {
 			error_msg: "",
 		} as ResponsePlaylistGetUser;
 
-		logger.info("Requested: GetUserPlaylists")
+		logger.info("Requested: GetUserPlaylists");
 
 		try {
 			let validated_user_id = await ValidateSession(request, response);
@@ -89,14 +93,16 @@ export class ControllerPlaylists extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;
 	}
 
 	@Post("create")
-	public async CreatePlaylist(@Body() request: RequestPlaylistCreate): Promise<ResponsePlaylistCreate> {
+	public async CreatePlaylist(
+		@Body() request: RequestPlaylistCreate,
+	): Promise<ResponsePlaylistCreate> {
 		const response = {
 			playlist_id: 0,
 			is_success: false,
@@ -104,20 +110,14 @@ export class ControllerPlaylists extends Controller {
 			error_msg: "",
 		} as ResponsePlaylistCreate;
 
-		logger.info("Requested: CreatePlaylist")
+		logger.info("Requested: CreatePlaylist");
 
 		try {
 			let validated_user_id = await ValidateSession(request, response);
 			if (validated_user_id !== -1) {
 				let playlists = await ControllerDatabase.GetPlaylistsByUserId(validated_user_id);
-				let playlist_exists = null;
-				for (let playlist of playlists) {
-					if (playlist.playlist_title === request.title) {
-						playlist_exists = playlist;
-						break;
-					}
-				}
-				if (!playlist_exists) {
+				let existing_playlist_idx = findIndex(playlists, playlist => playlist.playlist_title === request.title)
+				if (existing_playlist_idx === -1) {
 					let playlist_new = {
 						playlist_user_id: validated_user_id,
 						playlist_user_uuid: request.user_uuid,
@@ -148,14 +148,16 @@ export class ControllerPlaylists extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;
 	}
 
 	@Post("delete")
-	public async DeletePlaylist(@Body() request: RequestPlaylistDelete): Promise<ResponsePlaylistCreate> {
+	public async DeletePlaylist(
+		@Body() request: RequestPlaylistDelete,
+	): Promise<ResponsePlaylistCreate> {
 		const response = {
 			playlist_id: 0,
 			is_success: false,
@@ -163,7 +165,7 @@ export class ControllerPlaylists extends Controller {
 			error_msg: "",
 		} as ResponsePlaylistDelete;
 
-		logger.info("Requested: DeletePlaylist")
+		logger.info("Requested: DeletePlaylist");
 		try {
 			let validated_user_id = await ValidateSession(request, response);
 			if (validated_user_id !== -1) {
@@ -190,7 +192,7 @@ export class ControllerPlaylists extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;

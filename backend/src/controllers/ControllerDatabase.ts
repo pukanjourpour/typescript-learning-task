@@ -7,10 +7,9 @@ import SongsInPlaylist from "../models/SongsInPlaylist";
 import { getLogger } from "log4js";
 
 const logger = getLogger("ControllerDatabase");
-logger.level = "info"
+logger.level = "info";
 
 export class ControllerDatabase {
-
 	public static async InsertUser(user: User): Promise<number> {
 		let user_id = -1;
 		let db: Database = await ControllerDatabase.ConnectToDatabase();
@@ -85,7 +84,10 @@ export class ControllerDatabase {
 		return user;
 	}
 
-	public static async GetUserByUsernameAndPassword(username: string, password_hash: string): Promise<User | null> {
+	public static async GetUserByUsernameAndPassword(
+		username: string,
+		password_hash: string,
+	): Promise<User | null> {
 		let user: User | null = null;
 		let db: Database = await ControllerDatabase.ConnectToDatabase();
 
@@ -96,10 +98,13 @@ export class ControllerDatabase {
                    WHERE username = $username
                      AND password_hash = $password_hash
                    LIMIT 1`;
-				user = await db.get(sql, ControllerDatabase.GenerateParamsSQL({
-					username: username,
-					password_hash: password_hash,
-				}));
+				user = await db.get(
+					sql,
+					ControllerDatabase.GenerateParamsSQL({
+						username: username,
+						password_hash: password_hash,
+					}),
+				);
 				if (user) {
 					logger.info(`Password for ${username} is correct`);
 				} else {
@@ -144,8 +149,12 @@ export class ControllerDatabase {
 
 		if (db) {
 			try {
-				let sql = "SELECT * FROM session WHERE session_user_id = $session_user_id AND session_is_deleted != 1 LIMIT 1 ";
-				session = await db.get(sql, ControllerDatabase.GenerateParamsSQL({ session_user_id: session_user_id }));
+				let sql =
+					"SELECT * FROM session WHERE session_user_id = $session_user_id AND session_is_deleted != 1 LIMIT 1 ";
+				session = await db.get(
+					sql,
+					ControllerDatabase.GenerateParamsSQL({ session_user_id: session_user_id }),
+				);
 				if (session) {
 					logger.info(`Session was found for user with id ${session_user_id}`);
 				} else {
@@ -218,21 +227,27 @@ export class ControllerDatabase {
                             SET playlist_is_deleted = $playlist_is_deleted,
                                 playlist_modified   = $playlist_modified
                             WHERE playlist_id = $playlist_id`;
-				await db.run(playlist_sql, ControllerDatabase.GenerateParamsSQL({
-					playlist_id: playlist_id,
-					playlist_is_deleted: 1,
-					playlist_modified: Date.now(),
-				}));
+				await db.run(
+					playlist_sql,
+					ControllerDatabase.GenerateParamsSQL({
+						playlist_id: playlist_id,
+						playlist_is_deleted: 1,
+						playlist_modified: Date.now(),
+					}),
+				);
 				logger.info(`Soft deleted playlist with id ${playlist_id}`);
 				let sip_sql = `UPDATE songs_in_playlist
                        SET sip_is_deleted = $sip_is_deleted,
                            sip_modified   = $sip_modified
                        WHERE sip_playlist_id = $sip_playlist_id`;
-				await db.run(sip_sql, ControllerDatabase.GenerateParamsSQL({
-					sip_playlist_id: playlist_id,
-					sip_is_deleted: 1,
-					sip_modified: Date.now(),
-				}));
+				await db.run(
+					sip_sql,
+					ControllerDatabase.GenerateParamsSQL({
+						sip_playlist_id: playlist_id,
+						sip_is_deleted: 1,
+						sip_modified: Date.now(),
+					}),
+				);
 				logger.info(`Removed songs from playlist with id ${playlist_id}`);
 				is_success = true;
 			} catch (err) {
@@ -313,7 +328,10 @@ export class ControllerDatabase {
                      AND p.playlist_user_id = $playlist_user_id
                    ORDER BY p.playlist_id
 				`;
-				let rows = await db.all(sql, ControllerDatabase.GenerateParamsSQL({ playlist_user_id: playlist_user_id }));
+				let rows = await db.all(
+					sql,
+					ControllerDatabase.GenerateParamsSQL({ playlist_user_id: playlist_user_id }),
+				);
 				if (rows) {
 					playlists = [];
 					ControllerDatabase.ConstructPlaylistModels(rows, playlists);
@@ -335,8 +353,12 @@ export class ControllerDatabase {
 
 		if (db) {
 			try {
-				let sql = "SELECT * FROM playlist WHERE playlist_id = $playlist_id AND playlist_is_deleted != 1 LIMIT 1";
-				playlist = await db.get(sql, ControllerDatabase.GenerateParamsSQL({ playlist_id: playlist_id }));
+				let sql =
+					"SELECT * FROM playlist WHERE playlist_id = $playlist_id AND playlist_is_deleted != 1 LIMIT 1";
+				playlist = await db.get(
+					sql,
+					ControllerDatabase.GenerateParamsSQL({ playlist_id: playlist_id }),
+				);
 				if (playlist) {
 					logger.info(`Playlist with id ${playlist_id} was found `);
 				} else {
@@ -386,22 +408,28 @@ export class ControllerDatabase {
                             song_modified   = $song_modified
                         WHERE song_id = $song_id
                           AND song_is_deleted != 1`;
-				await db.run(song_sql, ControllerDatabase.GenerateParamsSQL({
-					song_id: song_id,
-					song_is_deleted: 1,
-					song_modified: Date.now(),
-				}));
+				await db.run(
+					song_sql,
+					ControllerDatabase.GenerateParamsSQL({
+						song_id: song_id,
+						song_is_deleted: 1,
+						song_modified: Date.now(),
+					}),
+				);
 				logger.info(`Soft deleted song with id ${song_id}`);
 				let sip_sql = `UPDATE songs_in_playlist
                        SET sip_is_deleted = $sip_is_deleted,
                            sip_modified   = $sip_modified
                        WHERE sip_song_id = $sip_song_id
                          AND sip_is_deleted != 1`;
-				await db.run(sip_sql, ControllerDatabase.GenerateParamsSQL({
-					sip_song_id: song_id,
-					sip_is_deleted: 1,
-					sip_modified: Date.now(),
-				}));
+				await db.run(
+					sip_sql,
+					ControllerDatabase.GenerateParamsSQL({
+						sip_song_id: song_id,
+						sip_is_deleted: 1,
+						sip_modified: Date.now(),
+					}),
+				);
 				logger.info(`Removed song with id ${song_id} from playlist`);
 				is_success = true;
 			} catch (err) {
@@ -450,7 +478,9 @@ export class ControllerDatabase {
 				let result = await db.run(sql, ControllerDatabase.GenerateParamsSQL(sip));
 				is_success = true;
 				sip.sip_id = result.lastID;
-				logger.info(`Added song with id ${sip.sip_song_id} to playlist with id ${sip.sip_playlist_id}`);
+				logger.info(
+					`Added song with id ${sip.sip_song_id} to playlist with id ${sip.sip_playlist_id}`,
+				);
 			} catch (err) {
 				logger.error(err.msg);
 			}
@@ -472,7 +502,10 @@ export class ControllerDatabase {
                    FROM songs_in_playlist
                    WHERE sip_playlist_id = $sip_playlist_id
                      AND sip_is_deleted != 1`;
-				let rows = await db.all(sql, ControllerDatabase.GenerateParamsSQL({ sip_playlist_id: sip_playlist_id }));
+				let rows = await db.all(
+					sql,
+					ControllerDatabase.GenerateParamsSQL({ sip_playlist_id: sip_playlist_id }),
+				);
 				if (rows) {
 					songs = [];
 					for (let row of rows) {
@@ -481,11 +514,13 @@ export class ControllerDatabase {
                             WHERE song_id = $song_id
                               AND song_is_deleted != 1
                             LIMIT 1`;
-						let song: Song = await db.get(song_sql, ControllerDatabase.GenerateParamsSQL({ song_id: row.sip_song_id }));
+						let song: Song = await db.get(
+							song_sql,
+							ControllerDatabase.GenerateParamsSQL({ song_id: row.sip_song_id }),
+						);
 						if (song) {
 							songs.push(song);
 						}
-
 					}
 					logger.info(`Fetched songs from playlist with id ${sip_playlist_id}`);
 				}

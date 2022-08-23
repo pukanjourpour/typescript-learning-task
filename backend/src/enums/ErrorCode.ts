@@ -13,5 +13,5 @@ export enum ErrorCode {
 	song_does_not_exist = 32,
 	could_not_load_file = 33,
 	could_not_upload_file = 34,
-	could_not_add_to_playlist = 35
+	could_not_add_to_playlist = 35,
 }

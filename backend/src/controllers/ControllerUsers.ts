@@ -15,11 +15,10 @@ import { ValidateSession } from "../common/ValidateSession";
 import { getLogger } from "log4js";
 
 const logger = getLogger("ControllerUsers");
-logger.level = "info"
+logger.level = "info";
 
 @Route("users")
 export class ControllerUsers extends Controller {
-
 	@Post("register")
 	public async Register(@Body() request: RequestUserRegister): Promise<ResponseUserRegister> {
 		const response = {
@@ -29,7 +28,7 @@ export class ControllerUsers extends Controller {
 			error_msg: "",
 		} as ResponseUserRegister;
 
-		logger.info("Requested: Register")
+		logger.info("Requested: Register");
 
 		try {
 			let user_existing = await ControllerDatabase.GetUserByUsername(request.username);
@@ -57,7 +56,7 @@ export class ControllerUsers extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;
@@ -73,14 +72,19 @@ export class ControllerUsers extends Controller {
 			error_msg: "",
 		} as ResponseUserLogin;
 
-		logger.info("Requested: Login")
+		logger.info("Requested: Login");
 
 		try {
 			let user_existing = await ControllerDatabase.GetUserByUsername(request.username);
 			if (user_existing) {
-				let user_validated = await ControllerDatabase.GetUserByUsernameAndPassword(request.username, request.password_hash);
+				let user_validated = await ControllerDatabase.GetUserByUsernameAndPassword(
+					request.username,
+					request.password_hash,
+				);
 				if (user_validated && user_validated.user_id) {
-					let session_existing = await ControllerDatabase.GetSessionByUserId(user_validated.user_id);
+					let session_existing = await ControllerDatabase.GetSessionByUserId(
+						user_validated.user_id,
+					);
 					if (session_existing) {
 						session_existing.session_hash = "some new session hash";
 						session_existing.is_active = 1;
@@ -118,7 +122,7 @@ export class ControllerUsers extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;
@@ -133,7 +137,7 @@ export class ControllerUsers extends Controller {
 			error_msg: "",
 		} as ResponseUserGetUsername;
 
-		logger.info("Requested: GetUsernameByUuid")
+		logger.info("Requested: GetUsernameByUuid");
 
 		try {
 			let validated_user_id = await ValidateSession(request, response);
@@ -155,10 +159,9 @@ export class ControllerUsers extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;
 	}
-
 }

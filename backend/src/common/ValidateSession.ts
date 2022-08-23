@@ -2,9 +2,12 @@ import { ControllerDatabase } from "../controllers/ControllerDatabase";
 import { ErrorCode } from "../enums/ErrorCode";
 import { ErrorMessage } from "../enums/ErrorMessage";
 import { ResponseGeneric } from "../messages/ResponseGeneric";
-import { SecuredRequest } from "../messages/SecuredRequest";
+import { RequestSecured } from "../messages/RequestSecured";
 
-export async function ValidateSession(request: SecuredRequest, response: ResponseGeneric): Promise<number> {
+export async function ValidateSession(
+	request: RequestSecured,
+	response: ResponseGeneric,
+): Promise<number> {
 	let validated_user_id = -1;
 	let user = await ControllerDatabase.GetUserByUuid(request.user_uuid);
 	if (user && user.user_id) {

@@ -1,6 +1,6 @@
-import { SecuredRequest } from "./SecuredRequest";
+import { RequestSecured } from "./RequestSecured";
 
-export interface RequestSongAdd extends SecuredRequest {
+export interface RequestSongAdd extends RequestSecured {
 	playlist_id: number;
 	title: string;
 	artist: string;

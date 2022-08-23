@@ -24,7 +24,6 @@ logger.level = "info";
 
 @Route("songs")
 export class ControllerSongs extends Controller {
-
 	@Post("get")
 	public async GetPlaylistSongs(@Body() request: RequestSongGetPlaylist) {
 		const response = {
@@ -34,7 +33,7 @@ export class ControllerSongs extends Controller {
 			error_msg: "",
 		} as ResponseSongGetPlaylist;
 
-		logger.info("Requested: GetPlaylistSongs")
+		logger.info("Requested: GetPlaylistSongs");
 
 		try {
 			let validated_user_id = await ValidateSession(request, response);
@@ -56,7 +55,7 @@ export class ControllerSongs extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;
@@ -74,7 +73,7 @@ export class ControllerSongs extends Controller {
 			error_msg: "",
 		} as ResponseSongGet;
 
-		logger.info("Requested: GetSong")
+		logger.info("Requested: GetSong");
 
 		try {
 			let validated_user_id = await ValidateSession(request, response);
@@ -106,7 +105,7 @@ export class ControllerSongs extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;
@@ -121,14 +120,16 @@ export class ControllerSongs extends Controller {
 			error_msg: "",
 		} as ResponseSongAdd;
 
-		logger.info("Requested: AddSong")
+		logger.info("Requested: AddSong");
 
 		try {
 			let validated_user_id = await ValidateSession(request, response);
 			if (validated_user_id !== -1) {
-
 				let decoded = Buffer.from(request.file_b64, "base64");
-				let file_path: string = uniqueFilename("C:/Users/pukanjourpour/WebstormProjects/typescript-learning-task/backend/database/music") + ".wav";
+				let file_path: string =
+					uniqueFilename(
+						"C:/Users/pukanjourpour/WebstormProjects/typescript-learning-task/backend/database/music",
+					) + ".wav";
 				let file_uploaded = false;
 				try {
 					await fs.writeFile(file_path, decoded);
@@ -183,7 +184,7 @@ export class ControllerSongs extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;
@@ -198,7 +199,7 @@ export class ControllerSongs extends Controller {
 			error_msg: "",
 		} as ResponseSongAddToPlaylist;
 
-		logger.info("Requested: AddSongToPlaylist")
+		logger.info("Requested: AddSongToPlaylist");
 
 		try {
 			let validated_user_id = await ValidateSession(request, response);
@@ -249,7 +250,7 @@ export class ControllerSongs extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;
@@ -264,7 +265,7 @@ export class ControllerSongs extends Controller {
 			error_msg: "",
 		} as ResponseSongDelete;
 
-		logger.info("Requested: DeleteSong")
+		logger.info("Requested: DeleteSong");
 
 		try {
 			let validated_user_id = await ValidateSession(request, response);
@@ -286,7 +287,7 @@ export class ControllerSongs extends Controller {
 		if (!response.is_success) {
 			logger.error(`${response.error_msg} (error code: ${response.error_code})\n`);
 		} else {
-			logger.info("Request fulfilled successfully\n")
+			logger.info("Request fulfilled successfully\n");
 		}
 
 		return response;

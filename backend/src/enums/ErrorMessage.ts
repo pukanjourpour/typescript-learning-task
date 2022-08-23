@@ -13,7 +13,5 @@ export enum ErrorMessage {
 	song_does_not_exist = "Song does not exist",
 	could_not_load_file = "Could not load file",
 	could_not_upload_file = "Could not upload file",
-	could_not_add_to_playlist = "Could not add to playlist"
-
-
+	could_not_add_to_playlist = "Could not add to playlist",
 }

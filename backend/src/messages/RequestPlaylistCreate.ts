@@ -1,6 +1,6 @@
-import { SecuredRequest } from "./SecuredRequest";
+import { RequestSecured } from "./RequestSecured";
 
-export interface RequestPlaylistCreate extends SecuredRequest {
+export interface RequestPlaylistCreate extends RequestSecured {
 	title: string;
 	description: string;
 }
