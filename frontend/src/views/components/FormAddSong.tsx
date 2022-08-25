@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from "react";
 import { Alert, Button, Grid, Input, Typography } from "@mui/material";
 import { UploadFile } from "@mui/icons-material";
+import { Buffer } from 'buffer';
 
 interface Props {
   songAddedMessage: string | null;
@@ -61,7 +62,7 @@ export default class FormAddSong extends React.Component<Props, State> {
           let result = event.target.result;
           if (typeof result !== "string") {
             this.setState({
-              newFileB64: result.toString('base64'),
+              newFileB64: Buffer.from(result).toString('base64'),
               songLoadedMessage: "File is loaded",
             });
           } else {
@@ -69,7 +70,7 @@ export default class FormAddSong extends React.Component<Props, State> {
           }
         }
       };
-      reader.readAsBinaryString(file);
+      reader.readAsArrayBuffer(file);
       this.setState({ songLoadedMessage: "Loading file.." });
     } else {
       console.log("no files");

@@ -133,7 +133,12 @@
 						"type": "array"
 					}
 				},
-				"required": ["is_success", "error_code", "error_msg", "playlists"],
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"playlists"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -153,7 +158,12 @@
 						"format": "double"
 					}
 				},
-				"required": ["user_uuid", "session_hash", "request_hash", "timestamp"],
+				"required": [
+					"user_uuid",
+					"session_hash",
+					"request_hash",
+					"timestamp"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -176,7 +186,12 @@
 						"type": "array"
 					}
 				},
-				"required": ["is_success", "error_code", "error_msg", "playlists"],
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"playlists"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -196,7 +211,12 @@
 						"format": "double"
 					}
 				},
-				"required": ["user_uuid", "session_hash", "request_hash", "timestamp"],
+				"required": [
+					"user_uuid",
+					"session_hash",
+					"request_hash",
+					"timestamp"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -217,7 +237,12 @@
 						"format": "double"
 					}
 				},
-				"required": ["is_success", "error_code", "error_msg", "playlist_id"],
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"playlist_id"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -274,7 +299,13 @@
 						"format": "double"
 					}
 				},
-				"required": ["user_uuid", "session_hash", "request_hash", "timestamp", "playlist_id"],
+				"required": [
+					"user_uuid",
+					"session_hash",
+					"request_hash",
+					"timestamp",
+					"playlist_id"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -297,7 +328,12 @@
 						"type": "array"
 					}
 				},
-				"required": ["is_success", "error_code", "error_msg", "songs"],
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"songs"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -321,7 +357,13 @@
 						"format": "double"
 					}
 				},
-				"required": ["user_uuid", "session_hash", "request_hash", "timestamp", "playlist_id"],
+				"required": [
+					"user_uuid",
+					"session_hash",
+					"request_hash",
+					"timestamp",
+					"playlist_id"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -382,7 +424,13 @@
 						"format": "double"
 					}
 				},
-				"required": ["user_uuid", "session_hash", "request_hash", "timestamp", "song_id"],
+				"required": [
+					"user_uuid",
+					"session_hash",
+					"request_hash",
+					"timestamp",
+					"song_id"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -403,7 +451,12 @@
 						"format": "double"
 					}
 				},
-				"required": ["is_success", "error_code", "error_msg", "song_id"],
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"song_id"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -466,7 +519,11 @@
 						"type": "string"
 					}
 				},
-				"required": ["is_success", "error_code", "error_msg"],
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -522,7 +579,12 @@
 						"format": "double"
 					}
 				},
-				"required": ["is_success", "error_code", "error_msg", "song_id"],
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"song_id"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -546,7 +608,13 @@
 						"format": "double"
 					}
 				},
-				"required": ["user_uuid", "session_hash", "request_hash", "timestamp", "song_id"],
+				"required": [
+					"user_uuid",
+					"session_hash",
+					"request_hash",
+					"timestamp",
+					"song_id"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -566,7 +634,12 @@
 						"type": "string"
 					}
 				},
-				"required": ["is_success", "error_code", "error_msg", "user_uuid"],
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"user_uuid"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -586,7 +659,12 @@
 						"type": "string"
 					}
 				},
-				"required": ["request_hash", "timestamp", "username", "password_hash"],
+				"required": [
+					"request_hash",
+					"timestamp",
+					"username",
+					"password_hash"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -609,7 +687,13 @@
 						"type": "string"
 					}
 				},
-				"required": ["is_success", "error_code", "error_msg", "session_hash", "user_uuid"],
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"session_hash",
+					"user_uuid"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -629,7 +713,12 @@
 						"type": "string"
 					}
 				},
-				"required": ["request_hash", "timestamp", "username", "password_hash"],
+				"required": [
+					"request_hash",
+					"timestamp",
+					"username",
+					"password_hash"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -649,7 +738,12 @@
 						"type": "string"
 					}
 				},
-				"required": ["is_success", "error_code", "error_msg", "username"],
+				"required": [
+					"is_success",
+					"error_code",
+					"error_msg",
+					"username"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
