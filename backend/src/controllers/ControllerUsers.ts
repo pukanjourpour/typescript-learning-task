@@ -12,10 +12,8 @@ import Session from "../models/Session";
 import { RequestUserGetUsername } from "../messages/RequestUserGetUsername";
 import { ResponseUserGetUsername } from "../messages/ResponseUserGetUsername";
 import { ValidateSession } from "../common/ValidateSession";
-import { getLogger } from "log4js";
+import logger from "../logger";
 
-const logger = getLogger("ControllerUsers");
-logger.level = "info";
 
 @Route("users")
 export class ControllerUsers extends Controller {

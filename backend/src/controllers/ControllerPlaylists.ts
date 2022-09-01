@@ -13,11 +13,9 @@ import { ErrorMessage } from "../enums/ErrorMessage";
 import { ResponsePlaylistDelete } from "../messages/ResponsePlaylistDelete";
 import { RequestPlaylistDelete } from "../messages/RequestPlaylistDelete";
 import { ValidateSession } from "../common/ValidateSession";
-import { getLogger } from "log4js";
-import { findIndex } from 'lodash';
+import logger from "../logger";
+import  _  from 'lodash';
 
-const logger = getLogger("ControllerPlaylists");
-logger.level = "info";
 
 @Route("playlists")
 export class ControllerPlaylists extends Controller {
@@ -116,7 +114,7 @@ export class ControllerPlaylists extends Controller {
 			let validated_user_id = await ValidateSession(request, response);
 			if (validated_user_id !== -1) {
 				let playlists = await ControllerDatabase.GetPlaylistsByUserId(validated_user_id);
-				let existing_playlist_idx = findIndex(playlists, playlist => playlist.playlist_title === request.title)
+				let existing_playlist_idx = _.findIndex(playlists, playlist => playlist.playlist_title === request.title)
 				if (existing_playlist_idx === -1) {
 					let playlist_new = {
 						playlist_user_id: validated_user_id,

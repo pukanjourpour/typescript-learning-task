@@ -17,10 +17,7 @@ import { RequestSongDelete } from "../messages/RequestSongDelete";
 import { ResponseSongDelete } from "../messages/ResponseSongDelete";
 import { ResponseSongAddToPlaylist } from "../messages/ResponseSongAddToPlaylist";
 import { RequestSongAddToPlaylist } from "../messages/RequestSongAddToPlaylist";
-import { getLogger } from "log4js";
-
-const logger = getLogger("ControllerSongs");
-logger.level = "info";
+import logger from "../logger";
 
 @Route("songs")
 export class ControllerSongs extends Controller {

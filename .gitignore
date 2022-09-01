@@ -16,7 +16,7 @@
 /frontend/yarn-error.log*
 /frontend/package-lock.json
 /frontend/yarn.lock
-/frontend/node_modules
+/frontend
 
 /backend/.eslintrc
 /backend/.prettierignore
@@ -30,3 +30,5 @@
 /frontend/.babelrc
 /frontend/.eslintrc.json
 /frontend/webpack.config.ts
+/backend/log/
+/frontend/dist/

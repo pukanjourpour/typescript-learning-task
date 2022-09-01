@@ -29,7 +29,7 @@ i18n
           "create-new-playlist": "Create new playlist",
           "create-new-playlist-title": "Title",
           "create-new-playlist-description": "Description",
-          "create-new-playlist-bt": "Create new",
+          "create-new-playlist-btn": "Create new",
           "song-added": "Song is added",
           "song-not-added": "Could not add song",
           "no-chosen-song": "No song is chosen",

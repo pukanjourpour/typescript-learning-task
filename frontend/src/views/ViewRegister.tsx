@@ -35,7 +35,7 @@ export default class ViewRegister extends React.Component<Props, State> {
     let usernameRegex = new RegExp(
       "^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$"
     );
-    let errorMsg = "";
+    let errorMsg = null;
 
     if (usernameRegex.test(trimmedUsername)) {
       if (trimmedPassword === trimmedPasswordRepeat) {

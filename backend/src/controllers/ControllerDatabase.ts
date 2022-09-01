@@ -4,10 +4,8 @@ import Session from "../models/Session";
 import Playlist from "../models/Playlist";
 import Song from "../models/Song";
 import SongsInPlaylist from "../models/SongsInPlaylist";
-import { getLogger } from "log4js";
+import logger from "../logger";
 
-const logger = getLogger("ControllerDatabase");
-logger.level = "info";
 
 export class ControllerDatabase {
 	public static async InsertUser(user: User): Promise<number> {
@@ -281,9 +279,8 @@ export class ControllerDatabase {
                           playlist_modified
                    FROM playlist p
                             LEFT JOIN songs_in_playlist sip on sip.sip_playlist_id = p.playlist_id
-                            INNER JOIN song s on s.song_id = sip.sip_song_id
+                            LEFT JOIN song s on s.song_id = sip.sip_song_id
                    WHERE p.playlist_is_deleted != 1
-                     AND sip.sip_is_deleted != 1
                    ORDER BY p.playlist_id`;
 				let rows = await db.all(sql);
 				if (rows) {
@@ -322,9 +319,8 @@ export class ControllerDatabase {
                           playlist_modified
                    FROM playlist p
                             LEFT JOIN songs_in_playlist sip on sip.sip_playlist_id = p.playlist_id
-                            INNER JOIN song s on s.song_id = sip.sip_song_id
+                            LEFT JOIN song s on s.song_id = sip.sip_song_id
                    WHERE p.playlist_is_deleted != 1
-                     AND sip.sip_is_deleted != 1
                      AND p.playlist_user_id = $playlist_user_id
                    ORDER BY p.playlist_id
 				`;
